@@ -1,0 +1,133 @@
+# Example resume config. Copy this per offer (e.g. configs/acme-senior-fe.yaml)
+# and trim/reorder to match the job. Every value below is content the template
+# renders — nothing is hardcoded in the templates themselves.
+#
+# Inline emphasis: wrap a phrase in **double asterisks** to render it as the
+# design's navy "key phrase" bold (works in summary, highlights, achievements).
+
+target: Example Senior Platform Role   # used in the output filename
+
+# Which template renders this config. Run `npm run generate -- --list` to see
+# all available templates (each is a self-contained templates/<name>.html
+# file). A CLI `--template <id>` flag overrides this.
+template: classic
+
+basics:
+  name: Jane Doe
+  headline: Senior Platform Engineer · Distributed Systems   # per-offer swap
+  email: jane.doe@example.com
+  phone: +1 555 012 3456
+  location: Remote / San Francisco, CA
+  # showPhoto: true            # per-offer toggle; the header photo is hidden by default
+  # photo: photo.jpg           # path to a headshot, relative to this config file
+  links:
+    - label: LinkedIn
+      url: https://www.linkedin.com/in/janedoe/
+    - label: janedoe.dev
+      url: https://janedoe.dev
+
+# Per-offer swap zone.
+summary: >
+  Senior Platform Engineer with 9+ years building and operating distributed
+  systems at scale. Specialises in **reliability engineering, service-mesh
+  architecture, and developer-platform tooling**. Track record of leading
+  cross-team migrations, cutting infrastructure cost, and mentoring engineers
+  into senior roles.
+
+# Career-level metric tiles (not tied to one job).
+metrics:
+  - value: "9+"
+    label: Years Experience
+    sub: Backend & platform
+  - value: "40+"
+    label: Services Owned
+    sub: Production systems
+  - value: "6"
+    label: Engineers Mentored
+    sub: Into senior roles
+  - value: "99.99%"
+    label: Uptime SLA
+    sub: Core payments platform
+
+# Reorder / show-hide categories to match the offer.
+skills:
+  - category: Languages
+    items: [Go, TypeScript, Python, Rust]
+  - category: Infrastructure
+    items: [Kubernetes, Terraform, AWS, Service mesh]
+  - category: Data
+    items: [PostgreSQL, Kafka, Redis, ClickHouse]
+  - category: Leadership
+    items: [Technical mentorship, RFC reviews, Incident command]
+
+experience:
+  - company: TechCorp
+    role: Senior Platform Engineer
+    period: Mar 2022 – present
+    location: Remote
+    highlights:
+      - "Led the migration of **40+ services to a shared service mesh**, cutting cross-service latency by **30%**."
+      - "Designed and rolled out an **internal developer platform** adopted by 12 product teams, reducing new-service onboarding from days to hours."
+      - "Acted as **incident commander** for the payments platform, driving on-call maturity to a **99.99% uptime SLA**."
+  - company: Acme Inc
+    role: Backend Engineer
+    period: Jul 2019 – Feb 2022
+    location: San Francisco, CA
+    highlights:
+      - Built a **multi-region event pipeline** (Kafka, Go) processing 200M+ events/day.
+      - Introduced **infrastructure-as-code standards** (Terraform) across the backend org.
+  - company: StartupCo
+    role: Software Engineer
+    period: Aug 2016 – Jun 2019
+    location: San Francisco, CA
+    highlights:
+      - Built the company's first **public API** and developer documentation portal.
+      - Implemented **CI/CD pipelines** that cut deploy time from 45 minutes to under 5.
+
+# Key Achievements (v2 design). icon options: lightning, clipboard-check, target, star, dot.
+achievements:
+  - icon: lightning
+    title: Service Mesh Migration
+    description: "Migrated 40+ services onto a shared mesh — **30% lower cross-service latency**, zero customer-facing downtime."
+  - icon: target
+    title: Incident Response Overhaul
+    description: "Rebuilt the on-call program from scratch — **mean time to resolution down 60%** within two quarters."
+  - icon: star
+    title: Conference Speaker
+    description: "Invited speaker at **3 industry conferences** on distributed-systems reliability."
+
+speaking:
+  - title: Designing for Failure at Scale
+    venue: PlatformCon
+    year: 2025
+  - title: "Service Meshes: Worth the Complexity?"
+    venue: local meetup
+    location: San Francisco
+    year: 2024
+
+projects:
+  - name: open-mesh-cli
+    description: An open-source CLI for managing service-mesh configs
+    url: https://github.com/janedoe/open-mesh-cli
+    highlights:
+      - "**1.2k GitHub stars**; used internally by three companies."
+
+education:
+  - institution: State University
+    degree: BSc, Computer Science
+    period: 2016
+
+languages:
+  - name: English
+    level: Native
+  - name: Spanish
+    level: Conversational
+
+# Small, light footnote at the very bottom (e.g. a GDPR-style consent clause).
+
+consent: >-
+  „I hereby give consent for my personal data included in my application to be
+  processed for the purposes of the recruitment process under the European
+  Parliament's and Council of the European Union Regulation on the Protection of
+  Natural Persons as of 27 April 2016,with regard to the processing of personal
+  data and on the free movement of such data, and repealing Directive 95/46/EC.”

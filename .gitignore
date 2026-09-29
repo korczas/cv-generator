@@ -1,0 +1,12 @@
+node_modules/
+dist/
+output/*
+!output/.gitkeep
+*.log
+*.tgz
+.DS_Store
+.env
+.env.*
+!.env.example
+configs/*
+!configs/example.yaml

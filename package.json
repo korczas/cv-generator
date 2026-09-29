@@ -1,0 +1,68 @@
+{
+  "name": "cv-generator",
+  "version": "0.3.0",
+  "description": "Turn a YAML resume config into a polished PDF/HTML CV using self-contained Handlebars templates.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "bin": {
+    "cv-gen": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "generate": "tsx src/cli.ts",
+    "serve": "tsx src/server.ts",
+    "start": "tsx src/cli.ts",
+    "test": "tsx test/theme.test.ts && tsx test/helpers.test.ts && tsx test/render.test.ts && tsx test/server.test.ts && tsx test/config.test.ts && tsx test/cli.test.ts",
+    "test:layout": "tsx test/layout.test.ts && tsx test/regression.test.ts",
+    "prepack": "node scripts/build.mjs",
+    "test:package": "node test/package.test.mjs"
+  },
+  "keywords": [
+    "resume",
+    "cv",
+    "yaml",
+    "generator",
+    "html",
+    "handlebars",
+    "pdf"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "handlebars": "^4.7.9",
+    "puppeteer": "^25.12.0",
+    "yaml": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "pdfjs-dist": "^6.3.289",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  },
+  "files": [
+    "dist/",
+    "templates/",
+    "schema/resume.schema.json",
+    "configs/example.yaml",
+    "docs/templates.md",
+    "docs/classic-preview.png",
+    "docs/nice-navy-preview.png",
+    "prompts/fill-config.md",
+    "prompts/design-template.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/korczas/cv-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/korczas/cv-generator/issues"
+  },
+  "homepage": "https://github.com/korczas/cv-generator#readme"
+}

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{basics.name}}{{#if basics.displayHeadline}} — {{basics.displayHeadline}}{{/if}}</title>
+{{#if theme.fonts.googleFontsHref}}<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="{{theme.fonts.googleFontsHref}}" />{{/if}}
+<style>
+:root {
+  --navy: {{{theme.colors.navy}}};
+  --orange: {{{theme.colors.orange}}};
+  --orange-soft: {{{theme.colors.orangeSoft}}};
+  --ink: {{{theme.colors.ink}}};
+  --ink-alt: {{{theme.colors.inkAlt}}};
+  --slate: {{{theme.colors.slate}}};
+  --meta: {{{theme.colors.greyMeta}}};
+  --tile-sub: {{{theme.colors.tileSub}}};
+  --hairline: {{{theme.colors.hairline}}};
+  --muted: {{{theme.colors.muted}}};
+  --desk: {{{theme.colors.desk}}};
+  --panel: {{{theme.colors.panel}}};
+  --page: {{{theme.colors.page}}};
+  --font: {{{theme.fonts.primary}}};
+  --heading-font: {{{theme.fonts.heading}}};
+  --page-width: {{theme.layout.pageWidth}}px;
+  --page-height: {{theme.layout.pageHeight}}px;
+  --pad-top: {{theme.layout.padTop}}px;
+  --pad-bottom: {{theme.layout.padBottom}}px;
+  --side-pad: {{theme.layout.sidePadding}}px;
+  --sidebar-width: {{theme.layout.sidebarWidth}}px;
+  --radius: {{theme.layout.radius}}px;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.48;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+a { color: inherit; text-decoration: none; }
+strong { color: var(--ink); font-weight: 700; }
+
+.cv-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  padding: 40px;
+}
+.cv-page {
+  position: relative;
+  display: grid;
+  width: var(--page-width);
+  height: var(--page-height);
+  min-height: var(--page-height);
+  overflow: hidden;
+  background: var(--page);
+  box-shadow: 0 8px 32px rgba(20, 26, 38, 0.18);
+}
+.cv-page[data-page-index="0"] { grid-template-rows: auto minmax(0, 1fr); }
+.cv-page:not([data-page-index="0"]) { grid-template-rows: minmax(0, 1fr); }
+.page-grid {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  min-height: 0;
+  height: 100%;
+}
+.cv-page[data-page-index="0"] .page-grid { grid-row: 2; }
+.cv-page:not([data-page-index="0"]) .page-grid { grid-row: 1; }
+
+.masthead {
+  grid-row: 1;
+  background: var(--navy);
+  color: var(--page);
+  padding: 34px var(--side-pad);
+}
+.masthead h1 {
+  margin: 0;
+  font-family: var(--heading-font);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.masthead .headline {
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: var(--heading-font);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.sidebar {
+  display:flex; flex-direction:column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--panel);
+  padding: 32px 28px var(--pad-bottom);
+}
+.side-block { margin-bottom: 25px; }
+.side-block:last-child { margin-bottom: 0; }
+.side-h {
+  margin: 0 0 12px;
+  color: var(--navy);
+  font-family: var(--heading-font);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.side-h::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 6px;
+  background: var(--hairline);
+}
+.contact { margin: 0; padding: 0; list-style: none; }
+.contact li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 9px;
+  color: var(--slate);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.contact .ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--page);
+}
+.contact .ic svg { width: 13px; height: 13px; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile {
+  padding: 9px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--page);
+}
+.tile .val { color: var(--navy); font-size: 20px; font-weight: 700; line-height: 1; }
+.tile .lab { margin-top: 6px; color: var(--ink); font-size: 10.5px; font-weight: 700; line-height: 1.2; }
+.tile .sub { margin-top: 2px; color: var(--meta); font-size: 9.5px; line-height: 1.2; }
+.skill-group { margin-bottom: 11px; }
+.skill-group h4 {
+  margin: 0 0 5px;
+  color: var(--slate);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  padding: 2px 7px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  background: var(--page);
+  color: var(--ink);
+  font-size: 10.5px;
+  line-height: 1.3;
+}
+.langs { margin: 0; padding: 0; list-style: none; }
+.langs li { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+.langs .name { color: var(--ink); font-weight: 600; }
+.langs .lvl { color: var(--meta); }
+
+.main {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: var(--pad-top) var(--side-pad) var(--pad-bottom);
+}
+.main::before {
+  content: "";
+  position: absolute;
+  top: var(--pad-top);
+  bottom: var(--pad-bottom);
+  left: calc(var(--side-pad) + 17px);
+  width: 1px;
+  background: var(--hairline);
+}
+.page-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.blk { flex: 0 0 auto; min-width:0; overflow-wrap:anywhere; }
+.sec-h { margin: 0 0 14px; }
+.sec-head { display: flex; align-items: center; gap: 15px; }
+.sec-head .badge {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--page);
+  box-shadow: 0 0 0 4px var(--page);
+}
+.sec-head .badge svg { width: 18px; height: 18px; }
+.sec-head h2 {
+  margin: 0;
+  color: var(--navy);
+  font-family: var(--heading-font);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.sec-head .rule { height: 1px; flex: 1 1 auto; background: var(--hairline); }
+.sec-h[data-continued="1"] {
+  margin: 0 0 14px;
+  padding-left: 52px;
+  color: var(--navy);
+  font-family: var(--heading-font);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.sec-h[data-continued="1"] .cont { color: var(--meta); font-size: 9px; letter-spacing: 0.04em; }
+.summary { margin: 0 0 22px; padding-left: 52px; color: var(--slate); }
+.entry { position: relative; margin: 0 0 17px; padding-left: 52px; }
+.entry .dot {
+  position: absolute;
+  z-index: 2;
+  top: 5px;
+  left: 13px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--navy);
+  border-radius: 50%;
+  background: var(--page);
+}
+.entry .row, .entry .subrow { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+.entry .title { color: var(--ink); font-size: 14px; font-weight: 700; }
+.entry .when {
+  flex: 0 0 auto;
+  color: var(--meta);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.entry .role { color: var(--navy); font-size: 12.5px; font-weight: 600; }
+.entry .place { color: var(--meta); font-size: 10.5px; overflow-wrap: anywhere; }
+.bullets { margin: 4px 0 0; padding: 0; list-style: none; }
+.bullets li { position: relative; margin-bottom: 3px; padding-left: 16px; color: var(--slate); font-size: 12px; }
+.bullets li::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--navy);
+}
+.ach {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 10px 52px;
+  padding: 10px 13px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel) 72%, var(--page));
+}
+.ach .ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  margin-top: 2px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--page);
+}
+.ach .ic svg { width: 15px; height: 15px; }
+.ach .title { color: var(--ink); font-size: 13px; font-weight: 700; }
+.ach .desc { margin-top: 2px; color: var(--slate); font-size: 12px; }
+.cv-consent {
+  margin-top: auto;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--hairline);
+  color: var(--slate);
+  font-size: 10px;
+  line-height: 1.35;
+  background-color: white;
+}
+
+.cv-measure {
+  position: absolute;
+  top: 0;
+  left: -100000px;
+  width: calc(var(--page-width) - var(--sidebar-width) - 2 * var(--side-pad));
+  visibility: hidden;
+}
+
+@page { size: A4; margin: 0; }
+@media print {
+  html, body { background: var(--page); }
+  .cv-stage { display: block; padding: 0; }
+  .cv-page { margin: 0; box-shadow: none; break-after: page; page-break-after: always; }
+  .cv-page:last-child { break-after: auto; page-break-after: auto; }
+}
+#cv-sidebar-source { width:calc(var(--sidebar-width) - 56px); }
+.sidebar .sec-h[data-continued] { padding-left:0; }
+.sidebar .side-block { font-size:12px; margin-bottom:12px; }
+.sidebar .side-block svg { width:14px; height:14px; vertical-align:middle; }
+.sidebar .tile { margin-bottom:10px; }
+.sidebar .photo { width:90px; height:90px; object-fit:cover; border-radius:6px; }
+.sidebar a[href^="http"]::after { content:" (" attr(href) ")"; font-size:10px; overflow-wrap:anywhere; }
+</style>
+</head>
+<body>
+<noscript>JavaScript is required to lay out this CV. Enable it or use the generated PDF.</noscript>
+<div id="cv-stage" class="cv-stage"></div>
+
+<template id="cv-page-shell">
+  <article class="cv-page">
+    <header class="masthead" data-first-page-only>
+      <h1>{{basics.name}}</h1>
+      {{#if basics.displayHeadline}}<p class="headline">{{basics.displayHeadline}}</p>{{/if}}
+    </header>
+    <div class="page-grid">
+      <aside class="sidebar" data-sidebar-content></aside>
+      <main class="main"><div class="page-content" data-page-content></div></main>
+    </div>
+  </article>
+</template>
+
+<div id="cv-sidebar-source" class="cv-measure">
+{{#if basics.photoUri}}<div class="blk side-block"><img class="photo" src="{{basics.photoUri}}" alt="Portrait of {{basics.name}}"></div>{{/if}}
+{{#if basics.contactParts}}
+<h2 class="blk sec-h side-h" data-title="Contact">Contact</h2>
+{{#each basics.contactParts}}<div class="blk side-block" data-section="Contact" data-splittable>{{{icon icon}}} {{#if href}}<a href="{{href}}">{{text}}</a>{{else}}{{text}}{{/if}}</div>{{/each}}
+{{/if}}
+{{#if metrics}}<h2 class="blk sec-h side-h" data-title="At a Glance">At a Glance</h2>
+{{#each metrics}}<div class="blk tile side-block" data-section="At a Glance"><div class="val">{{value}}</div><div class="lab">{{label}}</div>{{#if sub}}<div class="sub">{{sub}}</div>{{/if}}</div>{{/each}}{{/if}}
+{{#if skills}}<h2 class="blk sec-h side-h" data-title="Skills">Skills</h2>
+{{#each skills}}<div class="blk skill-group" data-section="Skills" data-splittable><h4>{{category}}</h4><div class="chips">{{#each items}}<span class="chip">{{this}}</span> {{/each}}</div></div>{{/each}}{{/if}}
+{{#if languages}}<h2 class="blk sec-h side-h" data-title="Languages">Languages</h2>
+{{#each languages}}<div class="blk side-block" data-section="Languages" data-splittable>{{name}}{{#if level}} — {{level}}{{/if}}</div>{{/each}}{{/if}}
+</div>
+
+<div id="cv-source" class="cv-measure">
+  {{#if summary}}
+  <section class="blk sec-h" data-title="Profile"><div class="sec-head"><span class="badge">{{{icon "star"}}}</span><h2>Profile</h2><span class="rule"></span></div></section>
+  <p class="blk summary" data-splittable data-section="Profile">{{{md summary}}}</p>
+  {{/if}}
+
+  {{#if experience}}
+  <section class="blk sec-h" data-title="Experience"><div class="sec-head"><span class="badge">{{{icon "clipboard-check"}}}</span><h2 data-title="Experience">Work Experience</h2><span class="rule"></span></div></section>
+  {{#each experience}}
+  <article class="blk entry" data-splittable data-section="Experience">
+    <span class="dot"></span>
+    <div class="row"><span class="title">{{company}}</span>{{#if period}}<span class="when">{{period}}</span>{{/if}}</div>
+    <div class="subrow"><span class="role">{{role}}</span>{{#if location}}<span class="place">{{location}}</span>{{/if}}</div>
+    {{#if highlights}}<ul class="bullets">{{#each highlights}}<li>{{{md this}}}</li>{{/each}}</ul>{{/if}}
+  </article>
+  {{/each}}
+  {{/if}}
+
+  {{#if projects}}
+  <section class="blk sec-h" data-title="Projects"><div class="sec-head"><span class="badge">{{{icon "target"}}}</span><h2 data-title="Projects">Projects</h2><span class="rule"></span></div></section>
+  {{#each projects}}
+  <article class="blk entry" data-splittable data-section="Projects">
+    <span class="dot"></span>
+    <div class="row"><span class="title">{{name}}</span>{{#if url}}<a class="place" href="{{url}}">{{url}}</a>{{/if}}</div>
+    {{#if description}}<div class="role">{{{md description}}}</div>{{/if}}
+    {{#if highlights}}<ul class="bullets">{{#each highlights}}<li>{{{md this}}}</li>{{/each}}</ul>{{/if}}
+  </article>
+  {{/each}}
+  {{/if}}
+
+  {{#if achievements}}
+  <section class="blk sec-h" data-title="Key Achievements"><div class="sec-head"><span class="badge">{{{icon "lightning"}}}</span><h2 data-title="Key Achievements">Key Achievements</h2><span class="rule"></span></div></section>
+  {{#each achievements}}
+  <article class="blk ach" data-splittable data-section="Key Achievements">
+    <span class="ic">{{{icon icon}}}</span>
+    <div><div class="title">{{title}}</div><div class="desc">{{{md description}}}</div></div>
+  </article>
+  {{/each}}
+  {{/if}}
+
+  {{#if speaking}}
+  <section class="blk sec-h" data-title="Speaking"><div class="sec-head"><span class="badge">{{{icon "star"}}}</span><h2 data-title="Speaking">Speaking</h2><span class="rule"></span></div></section>
+  {{#each speaking}}
+  <article class="blk entry" data-splittable data-section="Speaking">
+    <span class="dot"></span>
+    <div class="row"><span class="title">{{title}}</span>{{#if year}}<span class="when">{{year}}</span>{{/if}}</div>
+    {{#if venue}}<div class="place">{{venue}}{{#if location}} · {{location}}{{/if}}</div>{{else}}{{#if location}}<div class="place">{{location}}</div>{{/if}}{{/if}}
+  </article>
+  {{/each}}
+  {{/if}}
+
+  {{#if education}}
+  <section class="blk sec-h" data-title="Education"><div class="sec-head"><span class="badge">{{{icon "clipboard-check"}}}</span><h2 data-title="Education">Education</h2><span class="rule"></span></div></section>
+  {{#each education}}
+  <article class="blk entry" data-splittable data-section="Education">
+    <span class="dot"></span>
+    <div class="row"><span class="title">{{#if degree}}{{degree}}{{else}}{{institution}}{{/if}}</span>{{#if period}}<span class="when">{{period}}</span>{{/if}}</div>
+    {{#if degree}}<div class="place">{{institution}}</div>{{/if}}
+  </article>
+  {{/each}}
+  {{/if}}
+
+  {{#if consent}}<footer id="cv-consent-block" class="blk cv-consent" data-consent data-preserve-margin>{{consent}}</footer>{{/if}}
+</div>
+
+{{{paginationScript}}}
+</body>
+</html>

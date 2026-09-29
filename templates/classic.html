@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{basics.name}} — Resume</title>
+{{#if theme.fonts.googleFontsHref}}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{theme.fonts.googleFontsHref}}" rel="stylesheet">{{/if}}
+<style>
+:root {
+  --navy:{{{theme.colors.navy}}}; --orange:{{{theme.colors.orange}}}; --orange-soft:{{{theme.colors.orangeSoft}}};
+  --ink:{{{theme.colors.ink}}}; --ink-alt:{{{theme.colors.inkAlt}}}; --slate:{{{theme.colors.slate}}};
+  --grey-meta:{{{theme.colors.greyMeta}}}; --tile-sub:{{{theme.colors.tileSub}}}; --hairline:{{{theme.colors.hairline}}};
+  --divider-pipe:{{{theme.colors.dividerPipe}}}; --muted:{{{theme.colors.muted}}};
+  --desk:{{{theme.colors.desk}}}; --page:{{{theme.colors.page}}};
+  --font:{{{theme.fonts.primary}}}; --font-mono:{{{theme.fonts.mono}}};
+  --pad-top:{{theme.layout.padTop}}px; --pad-bottom:{{theme.layout.padBottom}}px; --side:{{theme.layout.sidePadding}}px;
+  --radius:{{theme.layout.radius}}px;
+}
+* { box-sizing:border-box; }
+html,body { margin:0; }
+body { background:var(--desk); font-family:var(--font); color:var(--ink); }
+a { color:var(--orange); text-decoration:none; }
+a[href^="http"]::after { content:" (" attr(href) ")"; font-size:10px; overflow-wrap:anywhere; }
+a:hover { text-decoration:underline; }
+
+.cv-stage { padding:40px; display:flex; flex-direction:column; align-items:center; gap:36px; }
+/* No min-height here: the paginator measures each page's *content* height, so
+   a min-height would make every page look full and force one block per page.
+   Full-sheet appearance is restored via JS (page.style.minHeight) AFTER
+   pagination, and via a fixed height in @media print. */
+.cv-page {
+  display:flex; flex-direction:column; height:{{theme.layout.pageHeight}}px; width:{{theme.layout.pageWidth}}px; background:var(--page);
+  box-shadow:0 20px 60px rgba(9,35,52,.18); overflow:hidden; position:relative;
+  padding:var(--pad-top) var(--side) var(--pad-bottom);
+}
+
+/* Measuring container: laid out at the real content width, kept offscreen. */
+.cv-measure { position:absolute; left:-10000px; top:0; width:{{pageContentWidth}}px; }
+
+.blk { margin:0; flex:0 0 auto; min-width:0; overflow-wrap:anywhere; }
+.blk-header { margin-bottom:14px; }
+.header-row { display:flex; justify-content:space-between; align-items:flex-start; gap:28px; }
+h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-spacing:-0.02em; }
+.headline { font-size:16px; color:var(--ink); font-weight:600; }
+.contact { display:flex; flex-wrap:wrap; gap:5px 14px; margin-top:16px; font-size:12.5px; color:var(--slate); align-items:center; }
+.photo { width:100px; height:100px; border-radius:10px; object-fit:cover; flex-shrink:0; }
+.accent-rule { height:{{theme.layout.accentRule}}px; background:var(--orange); margin-top:16px; }
+
+.summary { font-size:13px; line-height:1.55; color:var(--ink); margin:0 0 18px; text-align:justify; }
+
+.tiles { display:flex; gap:10px; margin-bottom:22px; }
+.tile { flex:1; text-align:center; border:1px solid var(--hairline); border-radius:var(--radius); padding:12px 6px; }
+.tile-num { font-size:24px; font-weight:800; color:var(--orange); }
+.tile-title { font-size:12.5px; font-weight:700; color:var(--navy); margin-top:2px; }
+.tile-sub { font-size:10.5px; color:var(--tile-sub); margin-top:1px; }
+
+.sec-h { font-size:13px; letter-spacing:0.16em; text-transform:uppercase; color:var(--navy);
+         font-weight:700; border-bottom:1px solid var(--hairline); padding-bottom:6px;
+         margin:36px 0 12px; }
+.sec-h .cont { color:var(--muted); font-weight:500; text-transform:none; letter-spacing:0; }
+
+.skills { display:grid; grid-template-columns:115px minmax(0,1fr); gap:6px 18px; font-size:13px; line-height:1.45; margin-bottom:8px; }
+.skill-cat { color:var(--orange); font-weight:700; }
+.skill-val { color:var(--ink); }
+
+.entry { margin-bottom:13px; }
+.job-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.job-title { font-size:15px; font-weight:700; color:var(--navy); }
+.job-company { color:var(--slate); font-weight:500; }
+.job-date { font-size:12px; color:var(--grey-meta); font-style:italic; white-space:nowrap; }
+.job-loc { font-size:11.5px; color:var(--grey-meta); font-style:italic; margin-bottom:6px; }
+.bullets { margin:0; padding-left:2px; list-style:none; font-size:12.5px; line-height:1.5; color:var(--ink-alt); }
+.bullets li { margin-bottom:3px; display:flex; gap:9px; align-items:flex-start; list-style:none; }
+.bullet { color:var(--navy); flex-shrink:0; line-height:1.5; }
+.btext { flex:1; text-align:justify; }
+
+.ach-row { display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
+.ach-icon { width:36px; height:36px; flex-shrink:0; border-radius:8px; background:var(--orange-soft); display:flex; align-items:center; justify-content:center; }
+.ach-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:2px; }
+.ach-desc { font-size:12.5px; line-height:1.5; color:var(--slate); text-align:justify; }
+
+.talk { margin-bottom:12px; }
+.talk-title { font-size:13.5px; font-weight:700; color:var(--navy); }
+.talk-sub { font-size:12px; color:var(--slate); }
+
+.edu { font-size:13.5px; color:var(--ink); margin-bottom:10px; }
+
+.lang-line { font-size:13.5px; color:var(--ink); line-height:1.5; }
+.lang-sep { color:var(--grey-meta); margin:0 8px; }
+
+.consent { margin-top:auto; padding-top:12px; font-size:10px; font-weight:400; font-style:italic; line-height:1.45;
+           color:var(--slate); text-align:left; }
+
+@media print {
+  body { background:#fff; }
+  .cv-stage { padding:0; gap:0; }
+  .cv-measure { display:none !important; }
+  .cv-page { box-shadow:none; margin:0; height:{{theme.layout.pageHeight}}px; min-height:{{theme.layout.pageHeight}}px; break-after:page; page-break-after:always; }
+  .cv-page:last-child { break-after:auto; page-break-after:auto; }
+}
+@page { size:A4; margin:0; }
+</style>
+</head>
+<body>
+<noscript>JavaScript is required to lay out this CV. Enable it or use the generated PDF.</noscript>
+<div id="cv-stage" class="cv-stage"></div>
+<div id="cv-source" class="cv-measure">
+<div class="blk blk-header">
+  <div class="header-row">
+    <div style="flex:1;">
+      <h1>{{basics.name}}</h1>
+      {{#if basics.displayHeadline}}<div class="headline">{{basics.displayHeadline}}</div>{{/if}}
+      <div class="contact">{{#each basics.contactParts}}{{#if href}}<a href="{{href}}" style="color:var(--orange); font-weight:600;">{{text}}</a>{{else}}<span>{{text}}</span>{{/if}}{{#unless @last}}<span style="color:var(--divider-pipe);">|</span>{{/unless}}{{/each}}</div>
+    </div>
+    {{#if basics.photoUri}}<img class="photo" src="{{basics.photoUri}}" alt="Portrait of {{basics.name}}">{{/if}}
+  </div>
+  <div class="accent-rule"></div>
+</div>
+
+{{#if summary}}<p class="blk summary" data-splittable>{{{md summary}}}</p>{{/if}}
+
+{{#if metrics}}
+<div class="blk tiles">
+  {{#each metrics}}
+  <div class="tile">
+    <div class="tile-num">{{value}}</div>
+    <div class="tile-title">{{label}}</div>
+    {{#if sub}}<div class="tile-sub">{{sub}}</div>{{/if}}
+  </div>
+  {{/each}}
+</div>
+{{/if}}
+
+{{#if skills}}
+<h2 class="blk sec-h" data-title="Skills">Skills</h2>
+{{#each skills}}
+<div class="blk skills" data-section="Skills" data-splittable><div class="skill-cat">{{category}}</div><div class="skill-val">{{join items ", "}}</div></div>
+{{/each}}
+{{/if}}
+
+{{#if experience}}
+<h2 class="blk sec-h" data-title="Experience">Experience</h2>
+{{#each experience}}
+<div class="blk entry" data-splittable data-section="Experience">
+  <div class="job-head">
+    <div class="job-title">{{role}} <span class="job-company">— {{company}}</span></div>
+    {{#if period}}<div class="job-date">{{period}}</div>{{/if}}
+  </div>
+  {{#if location}}<div class="job-loc">{{location}}</div>{{/if}}
+  {{#if highlights}}
+  <ul class="bullets">
+    {{#each highlights}}
+    <li><span class="bullet">&bull;</span><span class="btext">{{{md this}}}</span></li>
+    {{/each}}
+  </ul>
+  {{/if}}
+</div>
+{{/each}}
+{{/if}}
+
+{{#if projects}}
+<h2 class="blk sec-h" data-title="Projects">Projects</h2>
+{{#each projects}}
+<div class="blk entry" data-splittable data-section="Projects">
+  <div class="job-title">{{#if url}}<a href="{{url}}" style="color:var(--navy);">{{name}}</a>{{else}}{{name}}{{/if}}<span class="job-company">{{#if description}} — {{description}}{{/if}}</span></div>
+  {{#if highlights}}
+  <ul class="bullets">
+    {{#each highlights}}
+    <li><span class="bullet">&bull;</span><span style="flex:1;">{{{md this}}}</span></li>
+    {{/each}}
+  </ul>
+  {{/if}}
+</div>
+{{/each}}
+{{/if}}
+
+{{#if achievements}}
+<h2 class="blk sec-h" data-title="Key Achievements">Key Achievements</h2>
+{{#each achievements}}
+<div class="blk ach-row" data-splittable data-section="Key Achievements">
+  <div class="ach-icon">{{{icon icon}}}</div>
+  <div style="flex:1;">
+    <div class="ach-title">{{title}}</div>
+    <div class="ach-desc">{{{md description "var(--ink-alt)"}}}</div>
+  </div>
+</div>
+{{/each}}
+{{/if}}
+
+{{#if speaking}}
+<h2 class="blk sec-h" data-title="Speaking">Speaking</h2>
+{{#each speaking}}
+<div class="blk talk" data-splittable data-section="Speaking">
+  <div class="talk-title">{{title}}</div>
+  {{#if subParts}}<div class="talk-sub">{{#each subParts}}{{this}}{{#unless @last}} · {{/unless}}{{/each}}</div>{{/if}}
+</div>
+{{/each}}
+{{/if}}
+
+{{#if education}}
+<h2 class="blk sec-h" data-title="Education">Education</h2>
+{{#each education}}
+<div class="blk edu" data-section="Education">{{#each metaParts}}{{#if bold}}<b style="color:var(--navy);">{{text}}</b>{{else}}{{text}}{{/if}}{{#unless @last}} · {{/unless}}{{/each}}</div>
+{{/each}}
+{{/if}}
+
+{{#if languages}}
+<h2 class="blk sec-h" data-title="Languages">Languages</h2>
+<div class="blk lang-line" data-splittable data-section="Languages">{{#each languages}}<span class="lang-item">{{label}}</span>{{#unless @last}}<span class="lang-sep">·</span>{{/unless}}{{/each}}</div>
+{{/if}}
+{{#if consent}}<footer id="cv-consent" class="blk consent" data-consent data-preserve-margin>{{consent}}</footer>{{/if}}
+</div>
+{{{paginationScript}}}
+</body>
+</html>
