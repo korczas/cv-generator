@@ -73,6 +73,12 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
 .bullet { color:var(--navy); flex-shrink:0; line-height:1.5; }
 .btext { flex:1; text-align:justify; }
 
+.project-title { font-size:14px; line-height:1.35; font-weight:700; color:var(--navy); }
+.project-title a { color:inherit; }
+.project-description { margin-top:4px; font-size:12.5px; line-height:1.5; color:var(--slate); }
+.project-entry .bullets { margin-top:6px; }
+.project-entry .btext { text-align:left; }
+
 .ach-row { display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
 .ach-icon { width:36px; height:36px; flex-shrink:0; border-radius:8px; background:var(--orange-soft); display:flex; align-items:center; justify-content:center; }
 .ach-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:2px; }
@@ -160,12 +166,13 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
 {{#if projects}}
 <h2 class="blk sec-h" data-title="Projects">Projects</h2>
 {{#each projects}}
-<div class="blk entry" data-splittable data-section="Projects">
-  <div class="job-title">{{#if url}}<a href="{{url}}" style="color:var(--navy);">{{name}}</a>{{else}}{{name}}{{/if}}<span class="job-company">{{#if description}} — {{description}}{{/if}}</span></div>
+<div class="blk entry project-entry" data-splittable data-section="Projects">
+  <div class="project-title">{{#if url}}<a href="{{url}}">{{name}}</a>{{else}}{{name}}{{/if}}</div>
+  {{#if description}}<div class="project-description">{{{md description}}}</div>{{/if}}
   {{#if highlights}}
   <ul class="bullets">
     {{#each highlights}}
-    <li><span class="bullet">&bull;</span><span style="flex:1;">{{{md this}}}</span></li>
+    <li><span class="bullet">&bull;</span><span class="btext">{{{md this}}}</span></li>
     {{/each}}
   </ul>
   {{/if}}
