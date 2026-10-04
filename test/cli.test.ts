@@ -9,6 +9,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
+import { pathToFileURL } from "node:url";
 const dir = mkdtempSync(join(tmpdir(), "cv-cli-"));
 const cli = resolve("src/cli.ts");
 const config = join(dir, "cv.yaml");
@@ -22,7 +23,12 @@ writeFileSync(config, 'basics: {name: "李明"}');
 const run = (...args: string[]) =>
   spawnSync(
     process.execPath,
-    ["--import", resolve("node_modules/tsx/dist/loader.mjs"), cli, ...args],
+    [
+      "--import",
+      pathToFileURL(resolve("node_modules/tsx/dist/loader.mjs")).href,
+      cli,
+      ...args,
+    ],
     { cwd: dir, encoding: "utf8" },
   );
 try {

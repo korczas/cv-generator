@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { access, copyFile, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
@@ -25,7 +25,7 @@ for (const relative of [
   "opportunities/_template.md",
   "cvs/README.md",
 ]) {
-  assert.equal(spawnSync("test", ["-e", path.join(vault, relative)]).status, 0, `missing ${relative}`);
+  await access(path.join(vault, relative));
 }
 
 const branch = spawnSync("git", ["branch", "--show-current"], { cwd: vault, encoding: "utf8" });
@@ -38,10 +38,17 @@ assert.notEqual(secondRun.status, 0);
 assert.match(secondRun.stderr, /Refusing to overwrite existing path/);
 assert.equal(await readFile(marker, "utf8"), "do not change\n");
 
-const ignored = spawnSync("git", ["check-ignore", "career-vault/experience.md"], {
-  cwd: root,
+// Check the shipped ignore rules independently of any local tracked vault/gitlink.
+const parentGit = spawnSync("git", ["init", "--initial-branch=main"], {
+  cwd: temp,
   encoding: "utf8",
 });
-assert.equal(ignored.status, 0, "parent repository must ignore career-vault");
+assert.equal(parentGit.status, 0, parentGit.stderr);
+await copyFile(path.join(root, ".gitignore"), path.join(temp, ".gitignore"));
+const ignored = spawnSync("git", ["check-ignore", "career-vault/experience.md"], {
+  cwd: temp,
+  encoding: "utf8",
+});
+assert.equal(ignored.status, 0, `parent repository must ignore career-vault: ${ignored.stderr}`);
 
 console.log("vault init tests passed");
