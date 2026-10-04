@@ -12,11 +12,25 @@ Requires **Node.js 22.13+**. Use a supported Node 22 or 24 release.
 git clone https://github.com/korczas/cv-generator.git
 cd cv-generator
 npm ci
-cp configs/example.yaml configs/my-cv.yaml
-npm run generate -- configs/my-cv.yaml
+npm run vault:init
+cd career-vault
+git remote add origin <private-repository-url>
+git add .
+git commit -m "Initialize career vault"
+git push -u origin main
 ```
 
-Edit `configs/my-cv.yaml` and regenerate with `--force` to replace existing output.
+The initializer creates an ignored, independent Git repository for private career
+material. Return to the parent directory, create a tailored YAML file from
+`configs/example.yaml`, and render it without moving it into the parent repository:
+
+```sh
+cd ..
+cp configs/example.yaml career-vault/cvs/my-cv.yaml
+npm run generate -- career-vault/cvs/my-cv.yaml
+```
+
+Edit the tailored file and regenerate with `--force` to replace existing output.
 PDF generation uses the Chromium installed by Puppeteer. For HTML-only use:
 
 ```sh
@@ -132,11 +146,18 @@ code.** Theme tokens are validated; arbitrary HTML/SVG/CSS is not accepted in YA
 
 ## Privacy and security
 
-All of `configs/` except `example.yaml`, including nested personal files, is
-ignored by Git. Generated output is also ignored. The npm package allowlist
-excludes private configs and generated CVs. These controls do not remove files
-already committed or protect files force-added by hand. Inspect staged changes
-before sharing. Generated documents contain your resume and enabled photo data.
+`npm run vault:init` creates `career-vault/` as an independent private Git
+repository, not a submodule. The parent repository ignores the entire directory,
+while its own history, remote, and access controls remain separate. The vault
+contains canonical `experience.md`, one Markdown file per role under
+`opportunities/`, and tailored YAML files under `cvs/`.
+
+All of `configs/` except `example.yaml`, including nested personal files, is also
+ignored by Git. Generated output is ignored, and the npm package allowlist
+excludes private configs, vault contents, and generated CVs. These controls do
+not remove files already committed or protect files force-added by hand. Keep the
+vault remote private and inspect staged changes before sharing. Generated
+documents contain your resume and enabled photo data.
 
 See [SECURITY.md](SECURITY.md) for trust boundaries and reporting. The preview
 server is not a hosted upload service.

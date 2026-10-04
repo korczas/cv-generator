@@ -1,0 +1,18 @@
+# Generated documents
+*.pdf
+*.html
+output/
+
+# Temporary and editor files
+*.tmp
+*.temp
+*.swp
+*~
+.DS_Store
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+*.key
+*.pem

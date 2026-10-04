@@ -10,3 +10,4 @@ output/*
 !.env.example
 configs/*
 !configs/example.yaml
+/career-vault/

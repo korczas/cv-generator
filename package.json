@@ -12,9 +12,10 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "generate": "tsx src/cli.ts",
+    "vault:init": "node scripts/init-career-vault.mjs",
     "serve": "tsx src/server.ts",
     "start": "tsx src/cli.ts",
-    "test": "tsx test/theme.test.ts && tsx test/helpers.test.ts && tsx test/render.test.ts && tsx test/server.test.ts && tsx test/config.test.ts && tsx test/cli.test.ts",
+    "test": "tsx test/theme.test.ts && tsx test/helpers.test.ts && tsx test/render.test.ts && tsx test/server.test.ts && tsx test/config.test.ts && tsx test/cli.test.ts && node test/vault-init.test.mjs",
     "test:layout": "tsx test/layout.test.ts && tsx test/regression.test.ts",
     "prepack": "node scripts/build.mjs",
     "test:package": "node test/package.test.mjs"
@@ -43,6 +44,8 @@
   },
   "files": [
     "dist/",
+    "scripts/init-career-vault.mjs",
+    "scaffolds/career-vault/",
     "templates/",
     "schema/resume.schema.json",
     "configs/example.yaml",

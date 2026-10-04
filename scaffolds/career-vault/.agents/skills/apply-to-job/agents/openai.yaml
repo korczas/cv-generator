@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apply to job"
+  short_description: "Create an opportunity and tailored CV"
+  default_prompt: "Use $apply-to-job for this offer URL: "

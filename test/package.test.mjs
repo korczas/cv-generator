@@ -27,9 +27,16 @@ try {
   assert.ok(!files.includes("dist/stale-build-sentinel.js"));
   assert.ok(files.includes("dist/cli.js"));
   assert.ok(files.includes("schema/resume.schema.json"));
+  assert.ok(files.includes("scripts/init-career-vault.mjs"));
+  assert.ok(
+    files.includes("scaffolds/career-vault/.agents/skills/apply-to-job/SKILL.md"),
+  );
+  assert.ok(files.includes("scaffolds/career-vault/career-vault.yaml"));
+  assert.ok(files.includes("scaffolds/career-vault/gitignore.template"));
+  assert.ok(files.includes("scaffolds/career-vault/cvs-guide.template.md"));
   assert.ok(
     files.every((f) =>
-      /^(dist\/|templates\/|schema\/|configs\/example.yaml$|docs\/(templates.md|classic-preview.png|nice-navy-preview.png)$|prompts\/(fill-config.md|design-template.md)$|CONTRIBUTING.md$|SECURITY.md$|CHANGELOG.md$|package.json$|README.md$|LICENSE$)/.test(
+      /^(dist\/|templates\/|schema\/|scaffolds\/career-vault\/|scripts\/init-career-vault.mjs$|configs\/example.yaml$|docs\/(templates.md|classic-preview.png|nice-navy-preview.png)$|prompts\/(fill-config.md|design-template.md)$|CONTRIBUTING.md$|SECURITY.md$|CHANGELOG.md$|package.json$|README.md$|LICENSE$)/.test(
         f,
       ),
     ),
