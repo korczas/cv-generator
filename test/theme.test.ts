@@ -87,7 +87,7 @@ for (const [raw, message] of [
     failures.push(`theme parser should reject ${message}`);
   } catch (error) {
     check(
-      error instanceof Error && error.message.includes("broken.theme.json"),
+      error instanceof Error && error.message.includes("broken/theme.json"),
       `${message} should report the sidecar name`,
     );
   }

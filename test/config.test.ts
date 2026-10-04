@@ -10,7 +10,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { loadConfig } from "../src/loadConfig.js";
 import { photoDataUri } from "../src/helpers.js";
-import { renderCv, loadTemplateTheme } from "../src/render.js";
+import {
+  renderCv,
+  loadTemplateTheme,
+  validateTemplateConfig,
+} from "../src/render.js";
 import { resolveTheme } from "../src/theme.js";
 const dir = mkdtempSync(join(tmpdir(), "cv-config-"));
 try {
@@ -43,13 +47,18 @@ try {
     ["basics: {name: Test}\nunknown: x", /unknown/],
   ] as const) {
     writeFileSync(path, yaml);
-    assert.throws(() => loadConfig(path), error);
+    assert.throws(() => {
+      const config = loadConfig(path);
+      validateTemplateConfig(config, "classic");
+    }, error);
   }
   writeFileSync(
     path,
     "basics: {name: Test}\neducation: [{institution: School, period: 2020}]",
   );
-  assert.equal(loadConfig(path).education![0].period, 2020);
+  const loaded = loadConfig(path);
+  validateTemplateConfig(loaded, "classic");
+  assert.equal((loaded.education as Array<{ period: number }>)[0].period, 2020);
   assert.throws(() => loadTemplateTheme("../package"), /Unknown template/);
   assert.throws(
     () =>

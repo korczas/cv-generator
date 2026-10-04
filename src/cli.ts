@@ -110,7 +110,16 @@ async function main() {
   if (outBase) {
     outBase = outBase.replace(/\.(pdf|html)$/i, "");
   } else {
-    const parts = [slug(config.basics.name)];
+    const basics =
+      config.basics &&
+      typeof config.basics === "object" &&
+      !Array.isArray(config.basics)
+        ? (config.basics as Record<string, unknown>)
+        : undefined;
+    const configuredName =
+      basics && typeof basics.name === "string" ? basics.name : undefined;
+    const configFilename = basename(configPath).replace(/\.(?:ya?ml)$/i, "");
+    const parts = [slug(configuredName ?? configFilename)];
     if (config.target) parts.push(slug(config.target));
     parts.push(templateId);
     outBase = join("output", parts.join("-"));

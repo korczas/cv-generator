@@ -1,9 +1,21 @@
 # Template authoring
 
-A template is trusted code: `templates/<id>.html` (or `.hbs`) with an optional
-`<id>.theme.json`. IDs contain letters, numbers, underscores and hyphens. A `.hbs`
-file takes precedence over `.html`. Do not install templates from untrusted
+A template is a trusted-code folder: `templates/<id>/template.html` (or
+`template.hbs`) with required `interface.json` and `interface.md`, plus optional
+`theme.json`. IDs contain letters, numbers, underscores and hyphens. A
+`template.hbs` file takes precedence over `template.html`. Do not install templates from untrusted
 sources. Global defaults → sidecar → YAML overrides determines the theme.
+
+`interface.json` is a self-contained Draft-07 JSON Schema for the whole flat YAML
+document. Its root must be an object; use `additionalProperties: false` to make
+the accepted contract explicit. Local `#` references are supported, but runtime
+network resolution and external `$ref` values are not. Template-defined keys
+are passed to Handlebars unchanged. Engine-derived fields (resolved `theme`,
+contact/photo metadata, education/language/speaking metadata, content width and
+pagination script) override YAML values when the expected source shapes exist.
+`interface.md` documents the same contract for people and should link to the
+machine-readable schema; keep both files in sync when the template evolves.
+The selected template interface is reloaded for every preview request.
 
 For native-flow templates, use normal HTML plus `@page {size:A4}` and
 `break-inside:avoid` on short entries. Do not add `#cv-stage` if the template does

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../templates/classic/interface.json
 # Example resume config. Copy this per offer (e.g. configs/acme-senior-fe.yaml)
 # and trim/reorder to match the job. Every value below is content the template
 # renders — nothing is hardcoded in the templates themselves.
@@ -8,8 +9,8 @@
 target: Example Senior Platform Role   # used in the output filename
 
 # Which template renders this config. Run `npm run generate -- --list` to see
-# all available templates (each is a self-contained templates/<name>.html
-# file). A CLI `--template <id>` flag overrides this.
+# all available templates (each is a templates/<name>/ bundle with a required
+# interface.json). A CLI `--template <id>` flag overrides this.
 template: classic
 
 basics:

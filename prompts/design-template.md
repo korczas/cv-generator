@@ -2,13 +2,13 @@
 
 Paste this into Claude or v0 after creating a real config with
 `prompts/fill-config.md`. The workflow compares 2–3 rendered directions before
-authoring the selected production template and its theme sidecar.
+authoring the selected production template, required interface, and theme sidecar.
 
 ---
 
 I want you to design a Handlebars template for **cv-generator**, a CLI that
 renders a YAML resume config into print-ready A4 HTML and PDF. A custom visual
-theme is delivered as a JSON sidecar next to the HTML template.
+interface and visual theme are delivered as JSON sidecars next to the HTML template.
 
 ## Inputs
 
@@ -31,7 +31,7 @@ transcribed, stop and use `prompts/fill-config.md` first.
 - **v0, claude.ai, or an Artifact:** use the supplied real content to create 2–3
   labelled standalone illustrative mockups. These mockups are disposable visual
   previews, not cv-generator templates. After I select one, return the separate
-  production Handlebars template and theme JSON for me to save and test in the
+  production Handlebars template, interface JSON, and theme JSON for me to save and test in the
   repo. Do not claim to have repository access or to have run `npm` commands.
 
 ## Step 0 — confirm the real config
@@ -57,7 +57,8 @@ Frame every direction around the sections and content volume actually present.
 Then produce a real visual preview for **every** direction:
 
 - In Claude Code, create lightweight candidates named
-  `templates/preview-<slug>-a.html`, `preview-<slug>-b.html`, and so on. Render
+  `templates/preview-<slug>-a/template.html`,
+  `templates/preview-<slug>-b/template.html`, and so on. Render
   each against the real config to a distinct output with:
 
   ```bash
@@ -67,7 +68,10 @@ Then produce a real visual preview for **every** direction:
 
   If candidates use different palettes or fonts, make temporary config copies
   only when testing config-level overrides. Put each candidate's design defaults
-  in `templates/preview-<slug>-a.theme.json`; never overwrite `src/theme.ts`.
+  in `templates/preview-<slug>-a/theme.json`; give each candidate a complete
+  `templates/preview-<slug>-a/interface.json` matching the real config and an
+  `interface.md` summary; never
+  overwrite `src/theme.ts`.
 - In v0, claude.ai, or an Artifact, create one clearly labelled standalone mockup per
   direction using the real content. Do not present generic wireframes or dummy
   Jane Doe content as previews.
@@ -79,8 +83,9 @@ unreadably small to force a page count.
 
 ## Step 2 — author the selected template
 
-After selection, write `templates/<template-name>.html` and
-`templates/<template-name>.theme.json`. The sidecar contains the template's
+After selection, create `templates/<template-name>/` containing `template.html`,
+the required machine-readable `interface.json`, human-readable `interface.md`,
+and `theme.json`. The theme file contains the template's
 palette, fonts, and layout defaults. Never overwrite `src/theme.ts` for one
 template. Config `theme:` values are optional user overrides, not the home for
 the template's required defaults. Remove or leave clearly identified preview
@@ -90,17 +95,19 @@ layout must close gaps and remain balanced when sections are absent.
 
 ## Rendering model
 
-- A template is `templates/<name>.html` plus an optional
-  `templates/<name>.theme.json` containing partial defaults.
+- A template is a `templates/<name>/` bundle with `template.html` (or
+  `template.hbs`), a required self-contained Draft-07 `interface.json` for the
+  complete YAML document, a matching human-readable `interface.md`, and an
+  optional `theme.json` containing partial defaults.
 - `Handlebars.compile(templateSource)(context)` creates HTML. Headless Chromium
   produces PDF; `--format html` skips the PDF step for faster iteration.
 - A4 defaults to `794×1122px` at 96 dpi through
   `theme.layout.pageWidth`/`pageHeight`.
-- No registration is required. The CLI discovers `templates/*.html` by name.
+- No registration is required. The CLI discovers complete markup + interface bundles.
   Run `npm run generate -- --list` to inspect the discovered names.
 - Template selection order is `-t/--template`, then config `template`, then
   `classic`.
-- Theme precedence is global `DEFAULT_THEME`, then `<name>.theme.json`, then the
+- Theme precedence is global `DEFAULT_THEME`, then `<name>/theme.json`, then the
   config's `theme:` overrides. A malformed sidecar must fail with a clear error.
 
 ## Data available in the template
@@ -168,7 +175,7 @@ any currently populated section is later omitted.
 
 ## Template theme and CSS safety
 
-Put the design's defaults and icon set in `templates/<name>.theme.json`. The
+Put the design's defaults and icon set in `templates/<name>/theme.json`. The
 sidecar may add template-specific token names under `colors`, `fonts`, and
 `layout`; it owns all SVG path fragments under `icons`. Values must pass the runtime schema and safety rules in `docs/templates.md`.
 Arbitrary HTML, CSS statements and external SVG references are forbidden. Store only SVG
@@ -318,4 +325,4 @@ with temporary fixtures for:
 4. photo disabled and enabled when an actual image is available.
 
 Command success is not visual or runtime-schema validation. Fix all observed
-layout failures before calling `templates/<template-name>.html` complete.
+layout failures before calling `templates/<template-name>/template.html` complete.

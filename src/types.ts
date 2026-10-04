@@ -14,12 +14,20 @@
  * markers. Templates turn these into the design's navy "key phrase" emphasis.
  */
 
-export interface ResumeConfig {
+/** Engine-owned fields plus arbitrary fields defined by a template interface. */
+export interface EngineConfig {
+  target?: string;
+  template?: string;
+  theme?: DeepPartial<Theme>;
+  [key: string]: unknown;
+}
+
+export interface ResumeConfig extends EngineConfig {
   /** Optional label for the target offer, used in the output filename. */
   target?: string;
 
   /**
-   * Which template (a `templates/<name>.html` file) to render with. Defaults
+   * Which `templates/<name>/` bundle to render with. Defaults
    * to "classic". Run `--list` to see all available templates. A CLI
    * `--template` flag overrides this.
    */

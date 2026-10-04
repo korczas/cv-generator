@@ -96,17 +96,21 @@ breaks across operating systems.
 ## YAML schema
 
 See [the complete example](configs/example.yaml), [types](https://github.com/korczas/cv-generator/blob/main/src/types.ts), and
-[JSON Schema](schema/resume.schema.json). For YAML language-server completion,
+the Classic [template interface](templates/classic/interface.json) and its
+[human-readable guide](templates/classic/interface.md). For YAML language-server completion,
 add this to a config stored directly under `configs/`:
 
 ```yaml
-# yaml-language-server: $schema=../schema/resume.schema.json
+# yaml-language-server: $schema=../templates/classic/interface.json
 basics:
   name: Jane Doe
   headline: Platform Engineer
   email: jane.doe@example.com
 summary: Building **reliable systems**.
 ```
+
+`schema/resume.schema.json` remains a compatibility copy of the Classic
+interface.
 
 Only `basics.name` is required at the top level. Entries in optional sections
 have their own required fields. Supported sections are `summary`, `metrics`,
@@ -116,14 +120,16 @@ Section order comes from the template, not YAML key order. Use `**bold**` in bod
 copy for emphasis; arbitrary body HTML is escaped.
 
 Quote phone numbers and other string fields. Years/periods may also be numbers.
-Unknown fields, invalid types and unsafe values produce field-specific errors.
+The effective template (CLI override, then YAML `template`, then `classic`)
+validates the complete document. Unknown fields, invalid types and unsafe values
+produce interface- and field-specific errors.
 A config may be at most 1 MiB. Photos use `basics.showPhoto: true` and a relative
 `basics.photo` path inside the config directory. Supported formats are PNG,
 JPEG and WebP, up to 5 MiB. Missing or invalid requested photos fail clearly.
 
 ## Themes and custom templates
 
-Theme precedence is global defaults → template `.theme.json` → YAML `theme`.
+Theme precedence is global defaults → template `theme.json` → YAML `theme`.
 For example:
 
 ```yaml
@@ -138,9 +144,12 @@ Fonts are offline by default. To opt into Google Fonts, explicitly set
 `theme.fonts.googleFontsHref` to its HTTPS CSS URL. That makes requests to Google
 and may change pagination; `--offline` disables it. No font files are bundled.
 
-Copy a built-in template and its sidecar, or use [the content prompt](prompts/fill-config.md)
+Copy a built-in `templates/<name>/` bundle containing `template.html` (or
+`template.hbs`), required `interface.json`, human-readable `interface.md`, and
+optional `theme.json`, or use [the content prompt](prompts/fill-config.md)
 and [design prompt](prompts/design-template.md). Read [the current template contract](docs/templates.md)
-before authoring controlled layouts. Template IDs are discovered by filename;
+before authoring controlled layouts. Only complete markup + interface bundles
+are discovered;
 `.hbs` takes precedence over `.html`. **Custom templates are trusted executable
 code.** Theme tokens are validated; arbitrary HTML/SVG/CSS is not accepted in YAML.
 

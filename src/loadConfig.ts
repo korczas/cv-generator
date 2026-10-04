@@ -1,10 +1,10 @@
 import { readFileSync, statSync } from "node:fs";
 import { parse } from "yaml";
 import { validateConfig } from "./validation.js";
-import type { ResumeConfig } from "./types.js";
+import type { EngineConfig } from "./types.js";
 
-/** Read bounded YAML and validate every supported field before rendering. */
-export function loadConfig(path: string): ResumeConfig {
+/** Read bounded YAML and validate engine-owned fields before template validation. */
+export function loadConfig(path: string): EngineConfig {
   if (statSync(path).size > 1024 * 1024)
     throw new Error(`Config at ${path} exceeds 1 MiB`);
   const config: unknown = parse(readFileSync(path, "utf8"), {

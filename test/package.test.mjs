@@ -27,6 +27,10 @@ try {
   assert.ok(!files.includes("dist/stale-build-sentinel.js"));
   assert.ok(files.includes("dist/cli.js"));
   assert.ok(files.includes("schema/resume.schema.json"));
+  assert.ok(files.includes("templates/classic/interface.json"));
+  assert.ok(files.includes("templates/classic/interface.md"));
+  assert.ok(files.includes("templates/nice-navy/interface.json"));
+  assert.ok(files.includes("templates/nice-navy/interface.md"));
   assert.ok(files.includes("scripts/init-career-vault.mjs"));
   assert.ok(
     files.includes("scaffolds/career-vault/.agents/skills/apply-to-job/SKILL.md"),

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import Ajv from "ajv";
-import type { ResumeConfig, Theme, DeepPartial } from "./types.js";
+import Ajv, { type ErrorObject } from "ajv";
+import type { EngineConfig, Theme, DeepPartial } from "./types.js";
 
 const schema = JSON.parse(
   readFileSync(
@@ -9,12 +9,32 @@ const schema = JSON.parse(
   ),
 );
 const ajv = new Ajv({ allErrors: true });
-const checkConfig = ajv.compile(schema);
+const checkEngineConfig = ajv.compile({
+  type: "object",
+  properties: {
+    target: schema.properties.target,
+    template: schema.properties.template,
+    theme: schema.properties.theme,
+  },
+  definitions: { theme: schema.definitions.theme },
+});
 const checkTheme = ajv.compile(schema.definitions.theme);
 
-function report(check: typeof checkConfig, label: string): never {
+export function reportValidation(
+  check: { errors?: ErrorObject[] | null },
+  label: string,
+): never {
   throw new Error(
-    `${label}: ${check.errors?.map((e) => `${e.instancePath.slice(1).replaceAll("/", ".") || "root"} ${e.message}${e.params.additionalProperty ? ` (${e.params.additionalProperty})` : ""}`).join("; ")}`,
+    `${label}: ${check.errors
+      ?.map((e) => {
+        const base = e.instancePath.slice(1).replaceAll("/", ".");
+        const child =
+          (e.params.missingProperty as string | undefined) ??
+          (e.params.additionalProperty as string | undefined);
+        const path = [base, child].filter(Boolean).join(".") || "root";
+        return `${path} ${e.message}`;
+      })
+      .join("; ")}`,
   );
 }
 
@@ -75,7 +95,7 @@ export function validateTheme(
   value: unknown,
   label = "theme",
 ): asserts value is DeepPartial<Theme> {
-  if (!checkTheme(value)) report(checkTheme, label);
+  if (!checkTheme(value)) reportValidation(checkTheme, label);
   const theme = value as DeepPartial<Theme>;
   for (const [key, icon] of Object.entries(theme.icons ?? {}))
     validateIcon(icon!, `${label}.icons.${key}`);
@@ -124,10 +144,8 @@ export function validateLayout(theme: Theme): void {
 export function validateConfig(
   value: unknown,
   label = "Config",
-): asserts value is ResumeConfig {
-  if (!checkConfig(value)) report(checkConfig, label);
-  const config = value as ResumeConfig;
+): asserts value is EngineConfig {
+  if (!checkEngineConfig(value)) reportValidation(checkEngineConfig, label);
+  const config = value as EngineConfig;
   if (config.theme) validateTheme(config.theme, `${label}.theme`);
-  if (config.basics.showPhoto && !config.basics.photo)
-    throw new Error(`${label}.basics.photo is required when showPhoto is true`);
 }

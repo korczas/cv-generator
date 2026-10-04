@@ -27,6 +27,10 @@ changes, inspect every page of both generated example PDFs and attach sanitized
 screenshots. Preserve readable type and all content instead of shrinking it to
 fit a page count. See [template authoring](docs/templates.md).
 
+Every `templates/<name>/` contribution must include a self-contained
+`interface.json` describing its complete YAML contract and an `interface.md`
+explaining it for people. `theme.json` remains optional.
+
 Keep personal files under `configs/` or outside the repository. Only the example
 config is tracked. Inspect `git diff --cached` and `npm pack --dry-run` before
 committing or publishing. Do not force-add private files. A `.gitignore` rule is
