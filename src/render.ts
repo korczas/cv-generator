@@ -37,7 +37,8 @@ export function listTemplates(): string[] {
   return markupTemplateIds().filter(
     (id) =>
       existsSync(join(TEMPLATES_DIR, id, "interface.json")) &&
-      existsSync(join(TEMPLATES_DIR, id, "interface.md")),
+      existsSync(join(TEMPLATES_DIR, id, "interface.md")) &&
+      existsSync(join(TEMPLATES_DIR, id, "scaffold.yaml")),
   );
 }
 
@@ -71,6 +72,10 @@ export function assertTemplate(templateName: string): void {
     if (!existsSync(join(TEMPLATES_DIR, templateName, "interface.md")))
       throw new Error(
         `Template "${templateName}" is missing required human-readable interface "templates/${templateName}/interface.md"`,
+      );
+    if (!existsSync(join(TEMPLATES_DIR, templateName, "scaffold.yaml")))
+      throw new Error(
+        `Template "${templateName}" is missing required CV scaffold "templates/${templateName}/scaffold.yaml"`,
       );
     return;
   }

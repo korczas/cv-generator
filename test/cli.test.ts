@@ -17,6 +17,7 @@ const customDir = resolve("templates", customName);
 const customMarkup = resolve(customDir, "template.html");
 const customInterface = resolve(customDir, "interface.json");
 const customHumanInterface = resolve(customDir, "interface.md");
+const customScaffold = resolve(customDir, "scaffold.yaml");
 writeFileSync(config, 'basics: {name: "李明"}');
 const run = (...args: string[]) =>
   spawnSync(
@@ -52,6 +53,7 @@ try {
     }),
   );
   writeFileSync(customHumanInterface, "# Custom interface\n");
+  writeFileSync(customScaffold, "novel: Placeholder\n");
   assert.equal(
     run(genericConfig, "--template", customName, "--format", "html").status,
     0,

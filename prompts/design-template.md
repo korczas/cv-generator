@@ -85,7 +85,7 @@ unreadably small to force a page count.
 
 After selection, create `templates/<template-name>/` containing `template.html`,
 the required machine-readable `interface.json`, human-readable `interface.md`,
-and `theme.json`. The theme file contains the template's
+validated agent-ready `scaffold.yaml`, and `theme.json`. The theme file contains the template's
 palette, fonts, and layout defaults. Never overwrite `src/theme.ts` for one
 template. Config `theme:` values are optional user overrides, not the home for
 the template's required defaults. Remove or leave clearly identified preview
@@ -98,7 +98,8 @@ layout must close gaps and remain balanced when sections are absent.
 - A template is a `templates/<name>/` bundle with `template.html` (or
   `template.hbs`), a required self-contained Draft-07 `interface.json` for the
   complete YAML document, a matching human-readable `interface.md`, and an
-  optional `theme.json` containing partial defaults.
+  copy-and-fill `scaffold.yaml` that validates against it, plus an optional `theme.json`
+  containing partial defaults.
 - `Handlebars.compile(templateSource)(context)` creates HTML. Headless Chromium
   produces PDF; `--format html` skips the PDF step for faster iteration.
 - A4 defaults to `794×1122px` at 96 dpi through

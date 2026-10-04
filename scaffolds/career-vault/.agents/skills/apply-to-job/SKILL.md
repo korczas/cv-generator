@@ -39,26 +39,51 @@ and source notes when known.
 
 ## Tailor the CV
 
-Read `career-vault.yaml` when it exists, all of `experience.md`,
-`../schema/resume.schema.json`, and a current sample config from `../configs/`
-before writing the YAML. `experience.md` is the only source of candidate facts.
-Rephrase and prioritize facts for relevance, but do not invent employers, dates,
-tools, metrics, duties, or achievements.
-
 Use `defaults.template` from `career-vault.yaml`; an explicit template requested
-by the user overrides it. If neither is set, use `classic`. Include the schema
-comment `# yaml-language-server: $schema=../../schema/resume.schema.json`. Set
-`target` to `<Company> — <Role>` and tailor the headline, summary, skill ordering,
-selected highlights, and achievements to the posting. Prefer concrete evidence
-and measured outcomes. Include only sections supported by the master experience.
-Keep `showPhoto: false` unless the user asks otherwise.
+by the user overrides it. If neither is set, use `classic`.
+
+After resolving the template, read only
+`../templates/<template>/scaffold.yaml`. Copy that file to the destination CV,
+then fill it while preserving its shape:
+
+- preserve its top-level section set and order;
+- preserve the keys and key order used by its objects and array entries;
+- do not add a section or field absent from the scaffold, even if candidate data
+  or the job posting could support it;
+- do not restore sections deliberately removed from the scaffold;
+- replace sample values and resize arrays as needed, without carrying sample
+  facts into the tailored CV.
+
+In the copied language-server comment, change `./interface.json` to
+`../../templates/<template>/interface.json` so it resolves from `cvs/`. Do not
+read `interface.json` or `interface.md` to expand the scaffold; rendering is the
+validation authority.
+
+Also read all of `experience.md`; it is the only source of candidate facts.
+Rephrase and prioritize facts for relevance, but do not invent employers,
+dates, tools, metrics, duties, or achievements.
+
+Preserve the semantic unity of each source achievement. When one bullet in
+`experience.md` describes an initiative together with its scale, implementation,
+and measured result, keep those facts in one CV bullet; shorten or rephrase it
+instead of splitting the action from its outcome. Split a source bullet only
+when it contains genuinely independent accomplishments and every resulting CV
+bullet remains meaningful on its own. As a final content check, verify that each
+highlight reads as a coherent action-and-impact statement and that no metric has
+been detached from the work that produced it.
+
+Set `target` to `<Company> — <Role>` and tailor the headline, summary, skill
+ordering, selected highlights, and achievements to the posting. Prefer concrete
+evidence and measured outcomes. Include only sections supported by the master
+experience and enabled by the scaffold. Honor the scaffold's photo shape; never
+enable a photo unless the user asks.
 
 ## Verify
 
 From the parent `cv-generator` repository, run:
 
 ```sh
-npm run generate -- career-vault/cvs/<slug>.yaml --format html
+npm run generate -- career-vault/cvs/<slug>.yaml
 ```
 
 Fix validation or rendering errors. Inspect the generated HTML or PDF enough to

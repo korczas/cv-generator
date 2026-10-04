@@ -146,7 +146,7 @@ and may change pagination; `--offline` disables it. No font files are bundled.
 
 Copy a built-in `templates/<name>/` bundle containing `template.html` (or
 `template.hbs`), required `interface.json`, human-readable `interface.md`, and
-optional `theme.json`, or use [the content prompt](prompts/fill-config.md)
+template-specific `scaffold.yaml`, plus optional `theme.json`, or use [the content prompt](prompts/fill-config.md)
 and [design prompt](prompts/design-template.md). Read [the current template contract](docs/templates.md)
 before authoring controlled layouts. Only complete markup + interface bundles
 are discovered;

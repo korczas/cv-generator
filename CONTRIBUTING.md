@@ -29,7 +29,8 @@ fit a page count. See [template authoring](docs/templates.md).
 
 Every `templates/<name>/` contribution must include a self-contained
 `interface.json` describing its complete YAML contract and an `interface.md`
-explaining it for people. `theme.json` remains optional.
+explaining it for people. Include an agent-ready `scaffold.yaml` that validates
+against that interface and can be copied and filled. `theme.json` remains optional.
 
 Keep personal files under `configs/` or outside the repository. Only the example
 config is tracked. Inspect `git diff --cached` and `npm pack --dry-run` before

@@ -43,6 +43,5 @@ companion. Unknown fields are rejected.
 - `languages[]`: required `name`; optional `level`.
 
 Arrays accept at most 1,000 entries. Required text values must contain a
-non-whitespace character. See [`../../configs/example.yaml`](../../configs/example.yaml)
-for a complete document.
-
+non-whitespace character. The agent-ready [`scaffold.yaml`](scaffold.yaml) is
+the copy-and-fill starting point for a Classic document.

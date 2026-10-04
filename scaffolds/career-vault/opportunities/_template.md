@@ -31,3 +31,12 @@ location: ""
 ## Notes
 
 <!-- Research, interview preparation, compensation, questions, and decisions. -->
+
+## Regenerate CV
+
+After manually updating the tailored CV, run this command from the parent
+`cv-generator` repository:
+
+```sh
+npm run generate -- career-vault/cvs/<company>-<role>.yaml --force
+```

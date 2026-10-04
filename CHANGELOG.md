@@ -9,6 +9,8 @@
 - Preserve the Classic resume schema as `schema/resume.schema.json` for compatibility.
 - Organize templates as `templates/<name>/` bundles and add a human-readable
   `interface.md` beside each executable interface.
+- Add a validated `scaffold.yaml` to each bundle and make the scaffolded
+  `apply-to-job` skill copy and fill only the effective template's scaffold.
 
 ## 0.3.0
 

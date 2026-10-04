@@ -3,7 +3,7 @@
  * every registered template and asserts the output is well-formed. Run:
  * `npm test`.
  */
-import { dirname, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { loadConfig } from "../src/loadConfig.js";
 import { listTemplates, loadTemplateTheme, renderCv } from "../src/render.js";
 import { resolveTheme } from "../src/theme.js";
@@ -36,6 +36,21 @@ const expectedSections: [string, unknown][] = [
 ];
 
 for (const templateId of templates) {
+  const templateScaffoldPath = resolve(
+    join("templates", templateId, "scaffold.yaml"),
+  );
+  const templateScaffold = loadConfig(templateScaffoldPath);
+  const scaffoldHtml = renderCv(
+    templateScaffold,
+    resolveTheme(loadTemplateTheme(templateId), templateScaffold.theme),
+    dirname(templateScaffoldPath),
+    templateId,
+  );
+  check(
+    scaffoldHtml.includes("<!DOCTYPE html>"),
+    `[${templateId}] bundled scaffold should validate and render`,
+  );
+
   const theme = resolveTheme(loadTemplateTheme(templateId), config.theme);
   const html = renderCv(config, theme, baseDir, templateId);
 

@@ -19,6 +19,7 @@ const incompleteDir = resolve(templates, incompleteName);
 const customMarkup = resolve(customDir, "template.html");
 const customInterface = resolve(customDir, "interface.json");
 const customHumanInterface = resolve(customDir, "interface.md");
+const customScaffold = resolve(customDir, "scaffold.yaml");
 const incompleteMarkup = resolve(incompleteDir, "template.html");
 
 try {
@@ -61,6 +62,7 @@ try {
     }),
   );
   writeFileSync(customHumanInterface, "# Custom interface\n\nRequires `novel`.\n");
+  writeFileSync(customScaffold, "novel: Placeholder\n");
   assert.ok(listTemplates().includes(customName));
   const config = { novel: "Template-owned value" };
   validateTemplateConfig(config, customName);

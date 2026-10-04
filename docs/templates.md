@@ -3,7 +3,9 @@
 A template is a trusted-code folder: `templates/<id>/template.html` (or
 `template.hbs`) with required `interface.json` and `interface.md`, plus optional
 `theme.json`. IDs contain letters, numbers, underscores and hyphens. A
-`template.hbs` file takes precedence over `template.html`. Do not install templates from untrusted
+`template.hbs` file takes precedence over `template.html`. Each bundle also
+includes a `scaffold.yaml` that validates against its interface and acts as the
+agent's copy-and-fill source. Do not install templates from untrusted
 sources. Global defaults → sidecar → YAML overrides determines the theme.
 
 `interface.json` is a self-contained Draft-07 JSON Schema for the whole flat YAML
