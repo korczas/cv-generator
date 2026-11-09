@@ -1,24 +1,33 @@
 import { readFileSync } from "node:fs";
-import Ajv, { type ErrorObject } from "ajv";
+import Ajv, { type ErrorObject, type ValidateFunction } from "ajv";
+import { schemaPath } from "./paths.js";
+import { paperOf } from "./theme.js";
 import type { EngineConfig, Theme, DeepPartial } from "./types.js";
 
-const schema = JSON.parse(
-  readFileSync(
-    new URL("../schema/resume.schema.json", import.meta.url),
-    "utf8",
-  ),
-);
-const ajv = new Ajv({ allErrors: true });
-const checkEngineConfig = ajv.compile({
-  type: "object",
-  properties: {
-    target: schema.properties.target,
-    template: schema.properties.template,
-    theme: schema.properties.theme,
-  },
-  definitions: { theme: schema.definitions.theme },
-});
-const checkTheme = ajv.compile(schema.definitions.theme);
+let compiled:
+  | { engine: ValidateFunction; theme: ValidateFunction }
+  | undefined;
+
+/** Compile lazily so embedders can call `setAssetRoot` before first use. */
+function checks() {
+  if (!compiled) {
+    const schema = JSON.parse(readFileSync(schemaPath(), "utf8"));
+    const ajv = new Ajv({ allErrors: true });
+    compiled = {
+      engine: ajv.compile({
+        type: "object",
+        properties: {
+          target: schema.properties.target,
+          template: schema.properties.template,
+          theme: schema.properties.theme,
+        },
+        definitions: { theme: schema.definitions.theme },
+      }),
+      theme: ajv.compile(schema.definitions.theme),
+    };
+  }
+  return compiled;
+}
 
 export function reportValidation(
   check: { errors?: ErrorObject[] | null },
@@ -95,6 +104,7 @@ export function validateTheme(
   value: unknown,
   label = "theme",
 ): asserts value is DeepPartial<Theme> {
+  const checkTheme = checks().theme;
   if (!checkTheme(value)) reportValidation(checkTheme, label);
   const theme = value as DeepPartial<Theme>;
   for (const [key, icon] of Object.entries(theme.icons ?? {}))
@@ -126,8 +136,7 @@ export function validateTheme(
 
 export function validateLayout(theme: Theme): void {
   const l = theme.layout;
-  if (l.pageWidth !== 794 || l.pageHeight !== 1122)
-    throw new Error("theme.layout: only A4 (794 × 1122 px) is supported");
+  paperOf(theme);
   if (
     l.padTop + l.padBottom > l.pageHeight - 100 ||
     l.sidePadding * 2 > l.pageWidth - 100 ||
@@ -145,6 +154,7 @@ export function validateConfig(
   value: unknown,
   label = "Config",
 ): asserts value is EngineConfig {
+  const checkEngineConfig = checks().engine;
   if (!checkEngineConfig(value)) reportValidation(checkEngineConfig, label);
   const config = value as EngineConfig;
   if (config.theme) validateTheme(config.theme, `${label}.theme`);

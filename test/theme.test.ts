@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { loadTemplateTheme, parseTemplateTheme } from "../src/render.js";
 import { DEFAULT_THEME, resolveTheme } from "../src/theme.js";
 
@@ -114,3 +115,30 @@ if (failures.length) {
 }
 
 console.log("PASS — template theme loading, validation, and precedence hold.");
+
+// Paper sizes and Content-Security-Policy.
+{
+  const { PAPER, paperOf, paperTheme, contentSecurityPolicy } = await import("../src/theme.js");
+  const { validateLayout } = await import("../src/validation.js");
+  const a4 = resolveTheme();
+  const letter = resolveTheme(paperTheme("letter"));
+  assert.equal(paperOf(a4), "a4");
+  assert.equal(paperOf(letter), "letter");
+  assert.deepEqual(
+    [letter.layout.pageWidth, letter.layout.pageHeight],
+    [PAPER.letter.pageWidth, PAPER.letter.pageHeight],
+  );
+  validateLayout(letter);
+  assert.throws(
+    () => validateLayout(resolveTheme({ layout: { pageWidth: 800, pageHeight: 1000 } })),
+    /unsupported page size 800 × 1000/,
+  );
+  const offline = contentSecurityPolicy(a4);
+  assert.match(offline, /^default-src 'none'/);
+  assert.ok(!offline.includes("https:"), "offline CSP allows no network origins");
+  const google = contentSecurityPolicy(
+    resolveTheme({ fonts: { googleFontsHref: "https://fonts.googleapis.com/css2?family=Inter" } }),
+  );
+  assert.ok(google.includes("https://fonts.googleapis.com") && google.includes("https://fonts.gstatic.com"));
+  console.log("PASS — paper sizes and content security policy.");
+}

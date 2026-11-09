@@ -33,6 +33,10 @@ try {
   assert.ok(files.includes("templates/nice-navy/interface.json"));
   assert.ok(files.includes("templates/nice-navy/interface.md"));
   assert.ok(files.includes("templates/nice-navy/scaffold.yaml"));
+  for (const f of ["template.html", "interface.json", "interface.md", "scaffold.yaml", "theme.json"])
+    assert.ok(files.includes(`templates/plain/${f}`), `missing templates/plain/${f}`);
+  assert.ok(files.includes("dist/api.js"));
+  assert.ok(files.includes("dist/api.d.ts"));
   assert.ok(files.includes("scripts/init-career-vault.mjs"));
   assert.ok(
     files.includes("scaffolds/career-vault/.agents/skills/apply-to-job/SKILL.md"),
@@ -42,7 +46,7 @@ try {
   assert.ok(files.includes("scaffolds/career-vault/cvs-guide.template.md"));
   assert.ok(
     files.every((f) =>
-      /^(dist\/|templates\/|schema\/|scaffolds\/career-vault\/|scripts\/init-career-vault.mjs$|configs\/example.yaml$|docs\/(templates.md|classic-preview.png|nice-navy-preview.png)$|prompts\/(fill-config.md|design-template.md)$|CONTRIBUTING.md$|SECURITY.md$|CHANGELOG.md$|package.json$|README.md$|LICENSE$)/.test(
+      /^(dist\/|templates\/|schema\/|scaffolds\/career-vault\/|scripts\/init-career-vault.mjs$|configs\/example.yaml$|docs\/(templates.md|classic-preview.png|nice-navy-preview.png|plain-preview.png)$|prompts\/(fill-config.md|design-template.md)$|CONTRIBUTING.md$|SECURITY.md$|CHANGELOG.md$|package.json$|README.md$|LICENSE$)/.test(
         f,
       ),
     ),
@@ -64,7 +68,18 @@ try {
     ],
     { stdio: "pipe" },
   );
-  const bin = join(install, "node_modules", "cv-generator", "dist", "cli.js");
+  const bin = join(install, "node_modules", "@korczas", "cv-generator", "dist", "cli.js");
+  // The public API resolves through package exports from an installed copy.
+  const apiCheck = execFileSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "-e",
+      `import { renderFile, listTemplates } from "@korczas/cv-generator"; const r = renderFile(${JSON.stringify(resolve("configs/example.yaml"))}, { template: "plain", paper: "letter" }); console.log(listTemplates().join(",") + " " + r.paper);`,
+    ],
+    { cwd: install, encoding: "utf8" },
+  );
+  assert.equal(apiCheck.trim(), "classic,nice-navy,plain letter");
   const config = resolve("configs/example.yaml");
   const out = join(dir, "sample");
   execFileSync(process.execPath, [bin, config, "--format", "html", "-o", out], {

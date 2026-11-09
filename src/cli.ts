@@ -1,20 +1,15 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { basename, dirname, join, resolve } from "node:path";
-import { loadConfig } from "./loadConfig.js";
+import { basename, dirname, join } from "node:path";
+import { renderFile } from "./api.js";
 import { htmlToPdf } from "./pdf.js";
-import {
-  DEFAULT_TEMPLATE,
-  listTemplates,
-  loadTemplateTheme,
-  renderCv,
-} from "./render.js";
-import { resolveTheme } from "./theme.js";
+import { DEFAULT_TEMPLATE, listTemplates } from "./render.js";
+import { PAPERS, type Paper } from "./theme.js";
 
 /*
  * Usage:
- *   npm run generate -- <config.yaml> [-o <output>] [-t <template>] [--format pdf|html|both]
+ *   npm run generate -- <config.yaml> [-o <output>] [-t <template>] [--format pdf|html|both] [--paper a4|letter]
  *   npm run generate -- --list            # list available templates
  *
  * Template resolution order: -t/--template flag > config.template > "classic".
@@ -45,7 +40,7 @@ function printTemplates() {
 
 function printUsage() {
   console.error(
-    "Usage: npm run generate -- <config.yaml> [-o <output>] [-t <template>] [--format pdf|html|both]\n" +
+    "Usage: npm run generate -- <config.yaml> [-o <output>] [-t <template>] [--format pdf|html|both] [--paper a4|letter]\n" +
       "       npm run generate -- --list",
   );
 }
@@ -62,12 +57,13 @@ async function main() {
       version: { type: "boolean", short: "v" },
       force: { type: "boolean" },
       offline: { type: "boolean" },
+      paper: { type: "string" },
     },
   });
   if (values.help) {
     printUsage();
     console.log(
-      "Options: --help --version --list --offline --force (replace existing output)",
+      "Options: --help --version --list --offline --paper a4|letter --force (replace existing output)",
     );
     return;
   }
@@ -95,16 +91,13 @@ async function main() {
   const outArg = values.output;
   if (outArg !== undefined && !outArg.trim())
     throw new Error("--output must not be empty");
-  const config = loadConfig(configPath);
-  const baseDir = dirname(resolve(configPath));
-
-  const templateId = templateFlag ?? config.template ?? DEFAULT_TEMPLATE;
-  const theme = resolveTheme(
-    loadTemplateTheme(templateId),
-    config.theme,
-    values.offline ? { fonts: { googleFontsHref: "" } } : undefined,
-  );
-  const html = renderCv(config, theme, baseDir, templateId);
+  if (values.paper !== undefined && !PAPERS.includes(values.paper as Paper))
+    throw new Error(`Invalid --paper. Expected ${PAPERS.join(" or ")}.`);
+  const { html, config, templateId, paper } = renderFile(configPath, {
+    template: templateFlag,
+    paper: values.paper as Paper | undefined,
+    offline: values.offline,
+  });
 
   let outBase = outArg;
   if (outBase) {
@@ -133,7 +126,7 @@ async function main() {
       );
   }
   // Render both formats before writing either so a PDF error cannot leave half a result.
-  const pdf = format !== "html" ? await htmlToPdf(html) : undefined;
+  const pdf = format !== "html" ? await htmlToPdf(html, paper) : undefined;
   mkdirSync(dirname(outBase), { recursive: true });
   for (const ext of extensions) {
     const outPath = `${outBase}.${ext}`;

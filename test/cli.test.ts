@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
+  readFileSync,
   mkdtempSync,
   writeFileSync,
   existsSync,
@@ -33,7 +34,10 @@ const run = (...args: string[]) =>
   );
 try {
   assert.equal(run("--help").status, 0);
-  assert.match(run("--version").stdout, /0\.3\.0/);
+  assert.equal(
+    run("--version").stdout.trim(),
+    JSON.parse(readFileSync(resolve("package.json"), "utf8")).version,
+  );
   for (const args of [
     [config, "-t"],
     [config, "-o"],

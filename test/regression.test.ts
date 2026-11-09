@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import puppeteer from "puppeteer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { renderCv, loadTemplateTheme } from "../src/render.js";
-import { resolveTheme } from "../src/theme.js";
+import { paperTheme, resolveTheme } from "../src/theme.js";
 import { htmlToPdf } from "../src/pdf.js";
 import type { ResumeConfig } from "../src/types.js";
 
@@ -56,7 +56,7 @@ const fixtures: Record<string, ResumeConfig> = {
 };
 const browser = await puppeteer.launch({ headless: true });
 try {
-  for (const id of ["classic", "nice-navy"]) {
+  for (const id of ["classic", "nice-navy", "plain"]) {
     const theme = resolveTheme(loadTemplateTheme(id));
     for (const [label, config] of Object.entries(fixtures)) {
       const page = await browser.newPage();
@@ -178,6 +178,61 @@ try {
       } finally {
         await page.close();
       }
+    }
+  }
+  // Letter paper and the <html data-cv-status> mirror, for every template.
+  for (const id of ["classic", "nice-navy", "plain"]) {
+    const theme = resolveTheme(loadTemplateTheme(id), paperTheme("letter"));
+    const html = renderCv(fixtures.entry, theme, process.cwd(), id);
+    const page = await browser.newPage();
+    try {
+      await page.setContent(html, { waitUntil: "load" });
+      await page.waitForFunction("window.__pagination?.status !== 'pending'");
+      const state = await page.evaluate(() => ({
+        status: document.documentElement.dataset.cvStatus,
+        pages: Number(document.documentElement.dataset.cvPages),
+        heights: Array.from(
+          document.querySelectorAll<HTMLElement>("#cv-stage > .cv-page"),
+        ).map((p) => p.getBoundingClientRect().height),
+        widths: Array.from(
+          document.querySelectorAll<HTMLElement>("#cv-stage > .cv-page"),
+        ).map((p) => p.getBoundingClientRect().width),
+      }));
+      assert.equal(state.status, "complete", `${id}/letter data-cv-status`);
+      assert.equal(state.pages, state.heights.length, `${id}/letter data-cv-pages`);
+      assert.ok(state.heights.every((h) => h === 1056), `${id}/letter page heights`);
+      assert.ok(state.widths.every((w) => w === 816), `${id}/letter page widths`);
+    } finally {
+      await page.close();
+    }
+    const loading = getDocument({ data: new Uint8Array(await htmlToPdf(html, "letter")) });
+    const doc = await loading.promise;
+    const viewport = (await doc.getPage(1)).getViewport({ scale: 1 });
+    assert.equal(Math.round(viewport.width), 612, `${id}/letter PDF width`);
+    assert.equal(Math.round(viewport.height), 792, `${id}/letter PDF height`);
+    await loading.destroy();
+    console.log(`PASS — ${id}/letter pages, status attribute and PDF size`);
+  }
+  // A failed layout is visible on <html> without script access.
+  {
+    const page = await browser.newPage();
+    try {
+      await page.setContent(
+        renderCv(
+          { basics: { name: "Tall", headline: "Unbreakable header ".repeat(4000) } },
+          resolveTheme(loadTemplateTheme("plain")),
+          process.cwd(),
+          "plain",
+        ),
+        { waitUntil: "load" },
+      );
+      await page.waitForFunction("window.__pagination?.status !== 'pending'");
+      const attrs = await page.evaluate(() => ({ ...document.documentElement.dataset }));
+      assert.equal(attrs.cvStatus, "error", "oversized header must fail");
+      assert.match(attrs.cvMessage ?? "", /cannot fit/i);
+      console.log("PASS — layout failure is mirrored on <html data-cv-status>");
+    } finally {
+      await page.close();
     }
   }
   const photoDir = mkdtempSync(join(tmpdir(), "cv-photo-layout-"));

@@ -1,5 +1,10 @@
+import { PAPER, type Paper } from "./theme.js";
+
 /** Export trusted templates with Chromium's sandbox enabled. */
-export async function htmlToPdf(html: string): Promise<Buffer> {
+export async function htmlToPdf(
+  html: string,
+  paper: Paper = "a4",
+): Promise<Buffer> {
   const puppeteer = (await import("puppeteer")).default;
   let browser;
   try {
@@ -45,7 +50,7 @@ export async function htmlToPdf(html: string): Promise<Buffer> {
       throw new Error(`Template script failed: ${errors.join("; ")}`);
     return Buffer.from(
       await page.pdf({
-        format: "A4",
+        format: PAPER[paper].pdfFormat,
         printBackground: true,
         preferCSSPageSize: true,
         tagged: true,
