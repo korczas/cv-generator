@@ -65,11 +65,21 @@ export function paginationScript(theme: Theme): string {
   return `<script>
   (function () {
     ${PAGINATE_SOURCE}
+    // Mirror the status on <html> so tools without script access (for example
+    // headless --dump-dom) can detect success or failure.
+    function report(status, message, pages) {
+      var root = document.documentElement;
+      root.setAttribute('data-cv-status', status);
+      if (message) root.setAttribute('data-cv-message', message);
+      if (pages !== undefined) root.setAttribute('data-cv-pages', String(pages));
+    }
     window.__pagination = { status: 'pending' };
+    report('pending');
     var timer = setTimeout(function () { fail(new Error('Fonts or images did not load within 15 seconds')); }, 15000);
     function fail(error) {
       clearTimeout(timer);
       window.__pagination = { status: 'error', message: String(error.message || error) };
+      report('error', window.__pagination.message);
       var alert = document.createElement('p');
       alert.setAttribute('role', 'alert');
       alert.style.cssText = 'background:white;color:#900;padding:24px;position:relative;z-index:100';
@@ -95,6 +105,7 @@ export function paginationScript(theme: Theme): string {
         paginate(document, ${JSON.stringify(height)});
         clearTimeout(timer);
         window.__pagination = { status: 'complete' };
+        report('complete', '', document.querySelectorAll('#cv-stage > .cv-page').length);
         window.__paginated = true;
       } catch (e) { fail(e); }
     }

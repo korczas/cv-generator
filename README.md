@@ -50,6 +50,7 @@ does not disable Chromium's sandbox.
 npm run generate -- --list
 npm run generate -- configs/my-cv.yaml -t nice-navy --format both --force
 npm run generate -- configs/my-cv.yaml -o output/application --offline --force
+npm run generate -- configs/my-cv.yaml -t plain --paper letter --force
 npm run serve -- configs/my-cv.yaml -t classic --port 3000
 ```
 
@@ -64,6 +65,7 @@ rejects non-loopback Host headers. Stop it with Ctrl+C.
 | `-o, --output <path>` | Base output path; `.pdf`/`.html` is derived from format |
 | `--format pdf\|html\|both` | Default `pdf` |
 | `--force` | Explicitly replace existing output |
+| `--paper a4\|letter` | Paper size; default A4 (or the YAML theme's page size) |
 | `--offline` | Disable an explicitly configured Google Fonts URL |
 | `--list` | List installed templates |
 | `-h, --help` | Usage |
@@ -78,11 +80,13 @@ Unicode-aware slugs. Existing files are preserved unless `--force` is supplied.
 | --- | --- |
 | `classic` | Single-column navy/orange layout with optional portrait |
 | `nice-navy` | Navy masthead and independently paginated sidebar/main columns, optional portrait |
+| `plain` | ATS-friendly single column: no columns, icons, photo or letter-spaced text; links printed as text |
 
 ![Classic example](docs/classic-preview.png)
 ![Nice Navy example](docs/nice-navy-preview.png)
+![Plain example](docs/plain-preview.png)
 
-Both keep section headings with content, add continuation headings, split large
+All three accept the same YAML, so a CV can switch template without edits. All keep section headings with content, add continuation headings, split large
 narrative entries at word boundaries, and reserve room for consent. Sidebar
 sections continue onto later pages. An unbreakable element that cannot fit, a
 horizontal overflow, or a font/image loading failure produces an explicit error
@@ -90,8 +94,14 @@ instead of a successful clipped PDF. Output is limited to 100 pages.
 
 HTML needs JavaScript for controlled pagination. PDF text is selectable; test
 your destination ATS rather than assuming any visual CV design is universally
-compatible. Page dimensions are fixed to A4. Font availability can affect line
+compatible; `plain` is the safest choice for automated screening. Paper is A4
+(794 × 1122 px) or US Letter (816 × 1056 px). Font availability can affect line
 breaks across operating systems.
+
+Rendered HTML carries a restrictive Content-Security-Policy (no network access
+unless Google Fonts is explicitly configured) and reports its layout result on
+`<html data-cv-status="pending|complete|error">`, with `data-cv-pages` or
+`data-cv-message`, so headless browsers can check it without running scripts.
 
 ## YAML schema
 
@@ -182,8 +192,22 @@ npm audit
 ```
 
 `npm pack` builds the CLI and includes only runtime files, templates, schema,
-example and license/docs. Install the local tarball with `npm install -g ./cv-generator-0.3.0.tgz`
-and run `cv-gen --help`. This README does not assume a public npm release exists.
+example and license/docs. Install the local tarball with
+`npm install -g ./korczas-cv-generator-0.4.0.tgz` and run `cv-gen --help`.
+
+The package (`@korczas/cv-generator`) also exposes a small API for embedding,
+used for example by agent skills that ship the engine as one bundled file:
+
+```js
+import { renderFile, setAssetRoot } from "@korczas/cv-generator";
+
+// Optional: point at a folder containing templates/ and schema/ (bundled use).
+// setAssetRoot("/path/to/assets");
+const { html, paper, templateId } = renderFile("cv.yaml", { template: "plain", paper: "letter" });
+```
+
+`renderFile` is the same code path as the CLI. PDF export stays in the CLI
+(Puppeteer); embedders can print the HTML with any Chromium.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for tests, [CHANGELOG.md](CHANGELOG.md)
 for migration notes, and [GitHub Issues](https://github.com/korczas/cv-generator/issues)

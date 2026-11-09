@@ -35,6 +35,50 @@ export const DEFAULT_THEME: Theme = {
   },
 };
 
+/** Supported paper sizes in CSS px (96 dpi). The paginator lays out pages of exactly this size. */
+export const PAPER = {
+  a4: { pageWidth: 794, pageHeight: 1122, cssSize: "A4", pdfFormat: "A4" },
+  letter: { pageWidth: 816, pageHeight: 1056, cssSize: "letter", pdfFormat: "Letter" },
+} as const;
+export type Paper = keyof typeof PAPER;
+export const PAPERS = Object.keys(PAPER) as Paper[];
+
+/** Theme override that selects a paper size. */
+export function paperTheme(paper: Paper): DeepPartial<Theme> {
+  const { pageWidth, pageHeight } = PAPER[paper];
+  return { layout: { pageWidth, pageHeight } };
+}
+
+/** The paper a resolved theme lays out, or a clear error for unsupported sizes. */
+export function paperOf(theme: Theme): Paper {
+  const { pageWidth, pageHeight } = theme.layout;
+  const found = PAPERS.find(
+    (p) => PAPER[p].pageWidth === pageWidth && PAPER[p].pageHeight === pageHeight,
+  );
+  if (!found)
+    throw new Error(
+      `theme.layout: unsupported page size ${pageWidth} × ${pageHeight} px. Supported: ${PAPERS.map((p) => `${p} (${PAPER[p].pageWidth} × ${PAPER[p].pageHeight})`).join(", ")}`,
+    );
+  return found;
+}
+
+/**
+ * Content-Security-Policy for rendered documents: inline script/style only, data:
+ * images and fonts, no network unless Google Fonts was explicitly configured.
+ */
+export function contentSecurityPolicy(theme: Theme): string {
+  const google = Boolean(theme.fonts.googleFontsHref);
+  return [
+    "default-src 'none'",
+    "script-src 'unsafe-inline'",
+    google ? "style-src 'unsafe-inline' https://fonts.googleapis.com" : "style-src 'unsafe-inline'",
+    google ? "font-src data: https://fonts.gstatic.com" : "font-src data:",
+    "img-src data:",
+    "base-uri 'none'",
+    "form-action 'none'",
+  ].join("; ");
+}
+
 /** Deep-merge a partial theme over another theme (arrays/scalars replace). */
 function deepMerge<T>(base: T, override?: DeepPartial<T>): T {
   if (!override) return base;

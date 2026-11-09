@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="{{contentSecurityPolicy}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{basics.name}} — Resume</title>
 {{#if theme.fonts.googleFontsHref}}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{theme.fonts.googleFontsHref}}" rel="stylesheet">{{/if}}
@@ -18,7 +19,7 @@
 }
 * { box-sizing:border-box; }
 html,body { margin:0; }
-body { background:var(--desk); font-family:var(--font); color:var(--ink); }
+body { background:var(--desk); font-family:var(--font); color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 a { color:var(--orange); text-decoration:none; }
 a:hover { text-decoration:underline; }
 
@@ -103,7 +104,7 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
   .cv-page { box-shadow:none; margin:0; height:{{theme.layout.pageHeight}}px; min-height:{{theme.layout.pageHeight}}px; break-after:page; page-break-after:always; }
   .cv-page:last-child { break-after:auto; page-break-after:auto; }
 }
-@page { size:A4; margin:0; }
+@page { size:{{pageCssSize}}; margin:0; }
 </style>
 </head>
 <body>

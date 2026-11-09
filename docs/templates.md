@@ -19,7 +19,14 @@ pagination script) override YAML values when the expected source shapes exist.
 machine-readable schema; keep both files in sync when the template evolves.
 The selected template interface is reloaded for every preview request.
 
-For native-flow templates, use normal HTML plus `@page {size:A4}` and
+Put `<meta http-equiv="Content-Security-Policy" content="{{contentSecurityPolicy}}">`
+immediately after the charset meta; the engine computes a policy that allows only
+inline script/style and `data:` images/fonts, plus Google Fonts when explicitly
+configured. Use `@page { size:{{pageCssSize}}; margin:0; }` so the selected paper
+reaches the print dialog and PDF export. Contact parts also carry `fullText`
+(links as "Label: url") for text-only layouts.
+
+For native-flow templates, use normal HTML plus `@page {size:{{pageCssSize}}}` and
 `break-inside:avoid` on short entries. Do not add `#cv-stage` if the template does
 not use the controlled paginator. Use ordinary escaped Handlebars output for
 content, `{{{md text}}}` for escaped inline bold, and `{{{icon name}}}` for vetted
@@ -39,7 +46,8 @@ Controlled pagination uses:
   pagination; use `margin-top:auto` to pin it to the final page's bottom.
 - `{{{paginationScript}}}`: once before the closing body tag.
 
-The page is a fixed 794 × 1122 CSS pixel A4 shell. Contents must not flex-shrink;
+The page is a fixed-size shell: 794 × 1122 CSS px for A4 or 816 × 1056 for US
+Letter, taken from `theme.layout.pageWidth`/`pageHeight`. Contents must not flex-shrink;
 use `flex:0 0 auto` on blocks and wrap long values. Simple Classic pages are flex
 columns with padding. For two-column layouts, provide `#cv-page-shell` as an
 HTML `<template>` with a `.cv-page` first child and a fixed-height
@@ -51,7 +59,9 @@ pagination. The final consent is placed after both lanes finish.
 
 The script waits for load, fonts, and decoded images before measuring. It exposes
 `window.__pagination` with `pending`, `complete`, or `error` plus a message.
-`window.__paginated` is true only on success. An error is visibly reported in HTML
+`window.__paginated` is true only on success. The same result is mirrored on
+`<html>` as `data-cv-status` (`pending`, `complete`, `error`), `data-cv-pages`
+on success and `data-cv-message` on error, for tools that cannot run scripts. An error is visibly reported in HTML
 and fails PDF generation. Fonts/images timing out after 15 seconds fail instead
 of producing an unreliable document. Unbreakable oversized elements and layouts
 exceeding 100 pages are errors.
@@ -64,12 +74,13 @@ Google Fonts HTTPS `/css` or `/css2` URL; use an empty value for offline renderi
 SVG icons accept self-closing path/circle/rect/line/polyline/polygon/ellipse
 primitives and geometric/presentation attributes only, with no scripts, events,
 references, images, transforms or foreign objects. Layout tokens are finite
-nonnegative numbers; page size is A4 and margins must leave usable content space.
+nonnegative numbers; page size is A4 or Letter and margins must leave usable
+content space.
 
 Validate examples, minimal configs, absent sections, long paragraphs/jobs,
 overfull sidebars, enabled/disabled photos, Unicode and long URLs. Run all checks
 in CONTRIBUTING.md and inspect actual PDFs. Test text retention, page bounds,
 heading placement and consent gaps. A command exiting zero alone is insufficient.
 
-The two built-in styles and simple geometric icon primitives are distributed
+The three built-in styles and simple geometric icon primitives are distributed
 under the repository MIT license. No third-party font files are bundled.

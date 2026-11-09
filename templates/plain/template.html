@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="{{contentSecurityPolicy}}">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{basics.name}} — Resume</title>
+{{#if theme.fonts.googleFontsHref}}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{theme.fonts.googleFontsHref}}" rel="stylesheet">{{/if}}
+<!--
+  Plain: ATS-friendly single column. Text reads top to bottom in document order:
+  no columns, tables, text boxes, icons, photos, letter-spaced headings, or
+  contact details in page headers. Links show their URL as text.
+-->
+<style>
+:root {
+  --navy:{{{theme.colors.navy}}}; --ink:{{{theme.colors.ink}}}; --slate:{{{theme.colors.slate}}};
+  --hairline:{{{theme.colors.hairline}}}; --desk:{{{theme.colors.desk}}}; --page:{{{theme.colors.page}}};
+  --font:{{{theme.fonts.primary}}};
+  --pad-top:{{theme.layout.padTop}}px; --pad-bottom:{{theme.layout.padBottom}}px; --side:{{theme.layout.sidePadding}}px;
+}
+* { box-sizing:border-box; }
+html,body { margin:0; }
+body { background:var(--desk); font-family:var(--font); color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+a { color:inherit; text-decoration:none; }
+
+.cv-stage { padding:40px; display:flex; flex-direction:column; align-items:center; gap:36px; }
+.cv-page {
+  display:flex; flex-direction:column; height:{{theme.layout.pageHeight}}px; width:{{theme.layout.pageWidth}}px; background:var(--page);
+  box-shadow:0 20px 60px rgba(0,0,0,.15); overflow:hidden; position:relative;
+  padding:var(--pad-top) var(--side) var(--pad-bottom);
+}
+.cv-measure { position:absolute; left:-10000px; top:0; width:{{pageContentWidth}}px; }
+
+.blk { margin:0; flex:0 0 auto; min-width:0; overflow-wrap:anywhere; }
+h1 { font-size:26px; font-weight:700; color:var(--navy); margin:0; }
+.headline { font-size:14px; font-weight:600; margin-top:4px; }
+.contact { font-size:12px; color:var(--ink); margin-top:6px; line-height:1.5; }
+.blk-header { margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--hairline); }
+
+.sec-h { font-size:14px; font-weight:700; color:var(--navy); margin:16px 0 6px; padding-bottom:3px; border-bottom:1px solid var(--hairline); }
+.sec-h .cont { font-weight:400; font-size:11px; color:var(--slate); }
+
+.summary { font-size:12.5px; line-height:1.5; }
+.entry { margin-bottom:10px; font-size:12.5px; line-height:1.45; }
+.entry-title { font-weight:700; }
+.entry-meta { color:var(--slate); font-size:12px; }
+ul { margin:4px 0 0; padding-left:18px; }
+li { margin-bottom:2px; }
+.line { font-size:12.5px; line-height:1.5; margin-bottom:3px; }
+.consent { margin-top:auto; padding-top:10px; font-size:9.5px; line-height:1.4; color:var(--slate); }
+
+@media print {
+  body { background:#fff; }
+  .cv-stage { padding:0; gap:0; }
+  .cv-measure { display:none !important; }
+  .cv-page { box-shadow:none; margin:0; height:{{theme.layout.pageHeight}}px; min-height:{{theme.layout.pageHeight}}px; break-after:page; page-break-after:always; }
+  .cv-page:last-child { break-after:auto; page-break-after:auto; }
+}
+@page { size:{{pageCssSize}}; margin:0; }
+</style>
+</head>
+<body>
+<noscript>JavaScript is required to lay out this CV. Enable it or use the generated PDF.</noscript>
+<div id="cv-stage" class="cv-stage"></div>
+<div id="cv-source" class="cv-measure">
+<div class="blk blk-header">
+  <h1>{{basics.name}}</h1>
+  {{#if basics.displayHeadline}}<div class="headline">{{basics.displayHeadline}}</div>{{/if}}
+  {{#if basics.contactParts}}<div class="contact">{{#each basics.contactParts}}{{fullText}}{{#unless @last}} | {{/unless}}{{/each}}</div>{{/if}}
+</div>
+
+{{#if summary}}
+<h2 class="blk sec-h" data-title="Summary">Summary</h2>
+<p class="blk summary" data-splittable data-section="Summary">{{{md summary "inherit"}}}</p>
+{{/if}}
+
+{{#if metrics}}
+<h2 class="blk sec-h" data-title="Highlights">Highlights</h2>
+<ul class="blk line" data-splittable data-section="Highlights">{{#each metrics}}<li><b>{{value}}</b> {{label}}{{#if sub}} ({{sub}}){{/if}}</li>{{/each}}</ul>
+{{/if}}
+
+{{#if experience}}
+<h2 class="blk sec-h" data-title="Experience">Experience</h2>
+{{#each experience}}
+<div class="blk entry" data-splittable data-section="Experience">
+  <div class="entry-title">{{role}}, {{company}}</div>
+  {{#if period}}<div class="entry-meta">{{period}}{{#if location}} | {{location}}{{/if}}</div>{{else}}{{#if location}}<div class="entry-meta">{{location}}</div>{{/if}}{{/if}}
+  {{#if highlights}}<ul>{{#each highlights}}<li>{{{md this "inherit"}}}</li>{{/each}}</ul>{{/if}}
+</div>
+{{/each}}
+{{/if}}
+
+{{#if skills}}
+<h2 class="blk sec-h" data-title="Skills">Skills</h2>
+{{#each skills}}
+<div class="blk line" data-splittable data-section="Skills"><b>{{category}}:</b> {{join items ", "}}</div>
+{{/each}}
+{{/if}}
+
+{{#if projects}}
+<h2 class="blk sec-h" data-title="Projects">Projects</h2>
+{{#each projects}}
+<div class="blk entry" data-splittable data-section="Projects">
+  <div class="entry-title">{{name}}</div>
+  {{#if url}}<div class="entry-meta">{{url}}</div>{{/if}}
+  {{#if description}}<div>{{{md description "inherit"}}}</div>{{/if}}
+  {{#if highlights}}<ul>{{#each highlights}}<li>{{{md this "inherit"}}}</li>{{/each}}</ul>{{/if}}
+</div>
+{{/each}}
+{{/if}}
+
+{{#if achievements}}
+<h2 class="blk sec-h" data-title="Achievements">Achievements</h2>
+{{#each achievements}}
+<div class="blk entry" data-splittable data-section="Achievements"><span class="entry-title">{{title}}:</span> {{{md description "inherit"}}}</div>
+{{/each}}
+{{/if}}
+
+{{#if education}}
+<h2 class="blk sec-h" data-title="Education">Education</h2>
+{{#each education}}
+<div class="blk line" data-section="Education">{{#each metaParts}}{{#if bold}}<b>{{text}}</b>{{else}}{{text}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+{{/each}}
+{{/if}}
+
+{{#if languages}}
+<h2 class="blk sec-h" data-title="Languages">Languages</h2>
+<div class="blk line" data-splittable data-section="Languages">{{#each languages}}{{label}}{{#unless @last}}; {{/unless}}{{/each}}</div>
+{{/if}}
+
+{{#if speaking}}
+<h2 class="blk sec-h" data-title="Speaking">Speaking</h2>
+{{#each speaking}}
+<div class="blk line" data-splittable data-section="Speaking"><b>{{title}}</b>{{#if subParts}}, {{#each subParts}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}</div>
+{{/each}}
+{{/if}}
+{{#if consent}}<footer id="cv-consent" class="blk consent" data-consent data-preserve-margin>{{consent}}</footer>{{/if}}
+</div>
+{{{paginationScript}}}
+</body>
+</html>

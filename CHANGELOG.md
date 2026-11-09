@@ -1,6 +1,25 @@
 # Changelog
 
-## Unreleased
+## 0.4.0
+
+- Publish as `@korczas/cv-generator` (the unscoped npm name is taken) with a
+  programmatic API: `renderFile`, `renderCv`, `listTemplates`, `setAssetRoot`,
+  paper helpers and TypeScript declarations. The CLI uses the same `renderFile`.
+- Add the `plain` template: ATS-friendly single column with the same YAML
+  interface as Classic and Nice Navy.
+- Support US Letter (816 × 1056 px) alongside A4 via `--paper a4|letter` or
+  `theme.layout.pageWidth/pageHeight`; PDFs use the matching page size.
+- Mirror the pagination result on `<html data-cv-status>` with `data-cv-pages` /
+  `data-cv-message` for script-less headless checks.
+- Add a Content-Security-Policy meta tag to built-in templates (no network unless
+  Google Fonts is configured) and `print-color-adjust: exact` to Classic.
+- Load templates and schema lazily from a relocatable asset root so the engine can
+  be bundled into a single file.
+
+Template authors: add the CSP meta and `@page { size: {{pageCssSize}} }` (see
+`docs/templates.md`). Unsupported page sizes now report the supported list.
+
+### Also in 0.4.0 (previously listed as unreleased)
 
 - Add mandatory per-template Draft-07 interfaces and validate the complete YAML
   document against the effective template before rendering.

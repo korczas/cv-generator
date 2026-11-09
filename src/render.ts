@@ -8,8 +8,9 @@ import Ajv, { type ValidateFunction } from "ajv";
 import Handlebars from "handlebars";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { photoDataUri, paginationScript, registerHelpers } from "./helpers.js";
+import { templatesDir } from "./paths.js";
+import { contentSecurityPolicy, paperOf, PAPER } from "./theme.js";
 import type {
   DeepPartial,
   EngineConfig,
@@ -18,9 +19,8 @@ import type {
 
 export const DEFAULT_TEMPLATE = "classic";
 
-const TEMPLATES_DIR = fileURLToPath(new URL("../templates/", import.meta.url));
-
 function markupTemplateIds(): string[] {
+  const TEMPLATES_DIR = templatesDir();
   return readdirSync(TEMPLATES_DIR, { withFileTypes: true })
     .filter(
       (entry) =>
@@ -34,6 +34,7 @@ function markupTemplateIds(): string[] {
 
 /** List complete template bundles, relative to this module, not `cwd`. */
 export function listTemplates(): string[] {
+  const TEMPLATES_DIR = templatesDir();
   return markupTemplateIds().filter(
     (id) =>
       existsSync(join(TEMPLATES_DIR, id, "interface.json")) &&
@@ -64,6 +65,7 @@ export function assertTemplate(templateName: string): void {
       `Unknown template "${templateName}". Available: ${listTemplates().join(", ")}`,
     );
   }
+  const TEMPLATES_DIR = templatesDir();
   if (markupTemplateIds().includes(templateName)) {
     if (!existsSync(join(TEMPLATES_DIR, templateName, "interface.json")))
       throw new Error(
@@ -128,7 +130,7 @@ export function parseTemplateInterface(
 /** Load and compile templates/<name>/interface.json. */
 export function loadTemplateInterface(templateName: string): ValidateFunction {
   assertTemplate(templateName);
-  const path = join(TEMPLATES_DIR, templateName, "interface.json");
+  const path = join(templatesDir(), templateName, "interface.json");
   return parseTemplateInterface(readFileSync(path, "utf8"), templateName);
 }
 
@@ -149,7 +151,7 @@ export function loadTemplateTheme(
   templateName: string,
 ): DeepPartial<Theme> | undefined {
   assertTemplate(templateName);
-  const path = join(TEMPLATES_DIR, templateName, "theme.json");
+  const path = join(templatesDir(), templateName, "theme.json");
   if (!existsSync(path)) return undefined;
   return parseTemplateTheme(readFileSync(path, "utf8"), templateName);
 }
@@ -158,6 +160,15 @@ interface ContactPart {
   text: string;
   href?: string;
   icon: string;
+  /** Text-only form for ATS-friendly templates: links include their URL. */
+  fullText: string;
+}
+
+/** "Label: url" without the scheme, or just the URL when the label already is the address. */
+function linkFullText(label: string, url: string): string {
+  const bare = url.replace(/^https?:\/\//i, "").replace(/\/$/, "");
+  const same = (v: string) => v.toLowerCase().replace(/^www\./, "");
+  return same(label.trim()) === same(bare) ? bare : `${label}: ${bare}`;
 }
 
 /** Build the Handlebars render context: config content + resolved theme + derived/precomputed fields. */
@@ -183,6 +194,7 @@ function buildContext(config: EngineConfig, theme: Theme, baseDir: string) {
       text: basics.email,
       href: `mailto:${basics.email}`,
       icon: "mail",
+      fullText: basics.email,
     });
   }
   if (typeof basics?.phone === "string") {
@@ -190,6 +202,7 @@ function buildContext(config: EngineConfig, theme: Theme, baseDir: string) {
       text: basics.phone,
       href: `tel:${basics.phone.replace(/\s+/g, "")}`,
       icon: "phone",
+      fullText: basics.phone,
     });
   }
   for (const link of Array.isArray(basics?.links) ? basics.links : []) {
@@ -199,10 +212,11 @@ function buildContext(config: EngineConfig, theme: Theme, baseDir: string) {
       text: link.label,
       href: link.url,
       icon: isLinkedIn ? "linkedin" : "globe",
+      fullText: linkFullText(link.label, link.url),
     });
   }
   if (typeof basics?.location === "string")
-    contactParts.push({ text: basics.location, icon: "map-pin" });
+    contactParts.push({ text: basics.location, icon: "map-pin", fullText: basics.location });
 
   const speaking = Array.isArray(config.speaking) ? config.speaking.map((s) => isRecord(s) ? ({
     ...s,
@@ -237,6 +251,8 @@ function buildContext(config: EngineConfig, theme: Theme, baseDir: string) {
     languages,
     theme,
     pageContentWidth: theme.layout.pageWidth - 2 * theme.layout.sidePadding,
+    pageCssSize: PAPER[paperOf(theme)].cssSize,
+    contentSecurityPolicy: contentSecurityPolicy(theme),
     paginationScript: new Handlebars.SafeString(paginationScript(theme)),
   };
 }
@@ -253,10 +269,10 @@ export function renderCv(
   validateTheme(theme);
   validateLayout(theme);
   assertTemplate(templateName);
-  const hbsPath = join(TEMPLATES_DIR, templateName, "template.hbs");
+  const hbsPath = join(templatesDir(), templateName, "template.hbs");
   const templatePath = existsSync(hbsPath)
     ? hbsPath
-    : join(TEMPLATES_DIR, templateName, "template.html");
+    : join(templatesDir(), templateName, "template.html");
   let source: string;
   try {
     source = readFileSync(templatePath, "utf8");

@@ -1,0 +1,18 @@
+{
+  "colors": {
+    "navy": "#1f2d3a",
+    "ink": "#1a1a1a",
+    "slate": "#4a4a4a",
+    "hairline": "#c9c9c9",
+    "desk": "#d9dcd6",
+    "page": "#ffffff"
+  },
+  "fonts": {
+    "primary": "Arial, Helvetica, 'Liberation Sans', sans-serif"
+  },
+  "layout": {
+    "padTop": 48,
+    "padBottom": 48,
+    "sidePadding": 56
+  }
+}

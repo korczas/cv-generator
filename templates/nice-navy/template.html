@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="{{contentSecurityPolicy}}" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{{basics.name}}{{#if basics.displayHeadline}} — {{basics.displayHeadline}}{{/if}}</title>
 {{#if theme.fonts.googleFontsHref}}<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -327,7 +328,7 @@ strong { color: var(--ink); font-weight: 700; }
   visibility: hidden;
 }
 
-@page { size: A4; margin: 0; }
+@page { size: {{pageCssSize}}; margin: 0; }
 @media print {
   html, body { background: var(--page); }
   .cv-stage { display: block; padding: 0; }
