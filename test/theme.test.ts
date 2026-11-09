@@ -119,7 +119,7 @@ console.log("PASS — template theme loading, validation, and precedence hold.")
 // Paper sizes and Content-Security-Policy.
 {
   const { PAPER, paperOf, paperTheme, contentSecurityPolicy } = await import("../src/theme.js");
-  const { validateLayout } = await import("../src/validation.js");
+  const { validateLayout, validateTheme } = await import("../src/validation.js");
   const a4 = resolveTheme();
   const letter = resolveTheme(paperTheme("letter"));
   assert.equal(paperOf(a4), "a4");
@@ -140,5 +140,7 @@ console.log("PASS — template theme loading, validation, and precedence hold.")
     resolveTheme({ fonts: { googleFontsHref: "https://fonts.googleapis.com/css2?family=Inter" } }),
   );
   assert.ok(google.includes("https://fonts.googleapis.com") && google.includes("https://fonts.gstatic.com"));
+  assert.throws(() => validateTheme({ fonts: { embed: "comic-sans" } }), /fonts\.embed/);
+  validateTheme({ fonts: { embed: "inter" } });
   console.log("PASS — paper sizes and content security policy.");
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0
+
+- Optional embedded font: `theme.fonts.embed: inter` inlines Inter (SIL OFL 1.1, Latin and Latin Extended,
+  weights 400–800) as data: URIs, so line breaks are identical on every operating system and no network is
+  used. Set `fonts.primary`/`fonts.heading` to `'Inter', …` to use it. Off by default; existing output is
+  unchanged.
+- Template authors: put `{{{fontFaceCss}}}` at the start of the `<style>` block.
+
 ## 0.5.0
 
 - Add top-level `language: en | pl`. Built-in templates render section headings, the "(continued)" label,

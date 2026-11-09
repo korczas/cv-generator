@@ -213,6 +213,27 @@ try {
     await loading.destroy();
     console.log(`PASS — ${id}/letter pages, status attribute and PDF size`);
   }
+  // Embedded Inter loads from data: URIs under the CSP, with no network.
+  for (const id of ["classic", "nice-navy", "plain"]) {
+    const page = await browser.newPage();
+    try {
+      await page.setRequestInterception(true);
+      page.on("request", (r) => (r.url().startsWith("data:") ? r.continue() : r.abort()));
+      const theme = resolveTheme(loadTemplateTheme(id), {
+        fonts: { embed: "inter", primary: "'Inter', sans-serif", heading: "'Inter', sans-serif" },
+      });
+      await page.setContent(renderCv({ ...fixtures.minimal, summary: "Zażółć gęślą jaźń" } as ResumeConfig, theme, process.cwd(), id), { waitUntil: "load" });
+      await page.waitForFunction("window.__pagination?.status !== 'pending'");
+      const loaded = await page.evaluate(async () => {
+        await document.fonts.ready;
+        return [...document.fonts].some((f) => f.family.replace(/['"]/g, "") === "Inter" && f.status === "loaded");
+      });
+      assert.ok(loaded, `${id}: embedded Inter loaded`);
+    } finally {
+      await page.close();
+    }
+  }
+  console.log("PASS — embedded Inter loads offline in every template");
   // Polish continuation headings come from the label set, in every template.
   for (const id of ["classic", "nice-navy", "plain"]) {
     const page = await browser.newPage();

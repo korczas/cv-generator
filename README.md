@@ -151,9 +151,19 @@ theme:
     padTop: 60
 ```
 
+To make line breaks identical on every computer, embed the bundled Inter font (SIL Open Font License,
+see `fonts/inter/OFL.txt`):
+
+```yaml
+theme:
+  fonts:
+    embed: inter
+    primary: "'Inter', Helvetica, Arial, sans-serif"
+```
+
 Fonts are offline by default. To opt into Google Fonts, explicitly set
 `theme.fonts.googleFontsHref` to its HTTPS CSS URL. That makes requests to Google
-and may change pagination; `--offline` disables it. No font files are bundled.
+and may change pagination; `--offline` disables it. The only bundled font is Inter (opt-in, above).
 
 Copy a built-in `templates/<name>/` bundle containing `template.html` (or
 `template.hbs`), required `interface.json`, human-readable `interface.md`, and

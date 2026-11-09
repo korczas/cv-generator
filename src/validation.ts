@@ -111,7 +111,10 @@ export function validateTheme(
   for (const [key, icon] of Object.entries(theme.icons ?? {}))
     validateIcon(icon!, `${label}.icons.${key}`);
   for (const [key, font] of Object.entries(theme.fonts ?? {})) {
-    if (key === "googleFontsHref") {
+    if (key === "embed") {
+      if (font !== "" && font !== "inter")
+        throw new Error(`${label}.fonts.embed must be "inter" or empty`);
+    } else if (key === "googleFontsHref") {
       if (font === "") continue;
       let url: URL;
       try {

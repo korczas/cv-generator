@@ -173,6 +173,7 @@ export interface Theme {
     page: string;
   };
   fonts: {
+    /** Other stacks, plus `embed`: a bundled OFL font ("inter") inlined as data: URIs. */
     [key: string]: string;
     /** Primary UI/body family (CSS font stack, for HTML/PDF). */
     primary: string;
