@@ -129,6 +129,7 @@ have their own required fields. Supported sections are `summary`, `metrics`,
 Section order comes from the template, not YAML key order. Use `**bold**` in body
 copy for emphasis; arbitrary body HTML is escaped.
 
+Set `language: pl` for Polish section headings (default `en`); content is not translated.
 Quote phone numbers and other string fields. Years/periods may also be numbers.
 The effective template (CLI override, then YAML `template`, then `classic`)
 validates the complete document. Unknown fields, invalid types and unsafe values

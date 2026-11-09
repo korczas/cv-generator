@@ -16,6 +16,7 @@ companion. Unknown fields are rejected.
 | --- | --- | --- | --- |
 | `basics` | object | yes | Identity and contact information. `basics.name` is required. |
 | `target` | string | no | Non-blank job/application label used in the output filename. |
+| `language` | `en` \| `pl` | no | Language of section headings and fixed labels; default `en`. |
 | `template` | string | no | Template ID. A CLI `--template` value overrides it. |
 | `theme` | object | no | Validated color, font, layout, and icon overrides. |
 | `summary` | string | no | Introductory profile; supports `**bold**`. |

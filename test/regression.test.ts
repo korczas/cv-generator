@@ -213,6 +213,23 @@ try {
     await loading.destroy();
     console.log(`PASS — ${id}/letter pages, status attribute and PDF size`);
   }
+  // Polish continuation headings come from the label set, in every template.
+  for (const id of ["classic", "nice-navy", "plain"]) {
+    const page = await browser.newPage();
+    try {
+      await page.setContent(
+        renderCv({ ...fixtures.entry, language: "pl" } as ResumeConfig, resolveTheme(loadTemplateTheme(id)), process.cwd(), id),
+        { waitUntil: "load" },
+      );
+      await page.waitForFunction("window.__pagination?.status !== 'pending'");
+      const text = await page.evaluate(() => document.getElementById("cv-stage")!.textContent ?? "");
+      assert.ok(text.includes("(cd.)"), `${id}/pl continuation label`);
+      assert.ok(!text.includes("(continued)"), `${id}/pl has no English continuation label`);
+    } finally {
+      await page.close();
+    }
+  }
+  console.log("PASS — Polish continuation headings");
   // A failed layout is visible on <html> without script access.
   {
     const page = await browser.newPage();
@@ -332,8 +349,8 @@ try {
     () =>
       htmlToPdf(
         html.replace(
-          "function paginate(doc, PAGE_H) {",
-          "function paginate(doc, PAGE_H) { throw new Error('deliberate failure');",
+          "function paginate(doc, PAGE_H, CONTINUED) {",
+          "function paginate(doc, PAGE_H, CONTINUED) { throw new Error('deliberate failure');",
         ),
       ),
     /deliberate failure/,

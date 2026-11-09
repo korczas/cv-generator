@@ -18,6 +18,7 @@ function checks() {
         type: "object",
         properties: {
           target: schema.properties.target,
+          language: schema.properties.language,
           template: schema.properties.template,
           theme: schema.properties.theme,
         },

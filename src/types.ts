@@ -17,6 +17,8 @@
 /** Engine-owned fields plus arbitrary fields defined by a template interface. */
 export interface EngineConfig {
   target?: string;
+  /** CV language for built-in headings: "en" (default) or "pl". */
+  language?: "en" | "pl";
   template?: string;
   theme?: DeepPartial<Theme>;
   [key: string]: unknown;

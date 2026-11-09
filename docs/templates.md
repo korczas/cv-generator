@@ -24,7 +24,9 @@ immediately after the charset meta; the engine computes a policy that allows onl
 inline script/style and `data:` images/fonts, plus Google Fonts when explicitly
 configured. Use `@page { size:{{pageCssSize}}; margin:0; }` so the selected paper
 reaches the print dialog and PDF export. Contact parts also carry `fullText`
-(links as "Label: url") for text-only layouts.
+(links as "Label: url") for text-only layouts. `labels` holds the heading strings for the CV's
+`language` (`en`/`pl`, see `src/labels.ts`) and `lang` the matching HTML language code; use them for
+headings, `data-title`/`data-section` values and `<html lang>`.
 
 For native-flow templates, use normal HTML plus `@page {size:{{pageCssSize}}}` and
 `break-inside:avoid` on short entries. Do not add `#cv-stage` if the template does
