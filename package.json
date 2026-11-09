@@ -1,6 +1,6 @@
 {
   "name": "@korczas/cv-generator",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Turn a YAML resume config into a polished PDF/HTML CV using self-contained Handlebars templates.",
   "type": "module",
   "exports": {
@@ -56,6 +56,7 @@
     "scripts/init-career-vault.mjs",
     "scaffolds/career-vault/",
     "templates/",
+    "fonts/",
     "schema/resume.schema.json",
     "configs/example.yaml",
     "docs/templates.md",

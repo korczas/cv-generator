@@ -16,6 +16,10 @@ export function templatesDir(): string {
   return join(assetRoot, "templates");
 }
 
+export function fontsDir(): string {
+  return join(assetRoot, "fonts");
+}
+
 export function schemaPath(): string {
   return join(assetRoot, "schema", "resume.schema.json");
 }

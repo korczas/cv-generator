@@ -36,6 +36,7 @@ try {
   for (const f of ["template.html", "interface.json", "interface.md", "scaffold.yaml", "theme.json"])
     assert.ok(files.includes(`templates/plain/${f}`), `missing templates/plain/${f}`);
   assert.ok(files.includes("dist/api.js"));
+  assert.ok(files.includes("fonts/inter/inter-latin.woff2") && files.includes("fonts/inter/OFL.txt"));
   assert.ok(files.includes("dist/api.d.ts"));
   assert.ok(files.includes("scripts/init-career-vault.mjs"));
   assert.ok(
@@ -46,7 +47,7 @@ try {
   assert.ok(files.includes("scaffolds/career-vault/cvs-guide.template.md"));
   assert.ok(
     files.every((f) =>
-      /^(dist\/|templates\/|schema\/|scaffolds\/career-vault\/|scripts\/init-career-vault.mjs$|configs\/example.yaml$|docs\/(templates.md|classic-preview.png|nice-navy-preview.png|plain-preview.png)$|prompts\/(fill-config.md|design-template.md)$|CONTRIBUTING.md$|SECURITY.md$|CHANGELOG.md$|package.json$|README.md$|LICENSE$)/.test(
+      /^(dist\/|templates\/|fonts\/|schema\/|scaffolds\/career-vault\/|scripts\/init-career-vault.mjs$|configs\/example.yaml$|docs\/(templates.md|classic-preview.png|nice-navy-preview.png|plain-preview.png)$|prompts\/(fill-config.md|design-template.md)$|CONTRIBUTING.md$|SECURITY.md$|CHANGELOG.md$|package.json$|README.md$|LICENSE$)/.test(
         f,
       ),
     ),

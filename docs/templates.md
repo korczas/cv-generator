@@ -84,5 +84,8 @@ overfull sidebars, enabled/disabled photos, Unicode and long URLs. Run all check
 in CONTRIBUTING.md and inspect actual PDFs. Test text retention, page bounds,
 heading placement and consent gaps. A command exiting zero alone is insufficient.
 
+Embedded fonts: start the `<style>` block with `{{{fontFaceCss}}}`; it is empty unless the theme sets
+`fonts.embed` (currently `inter`, from `fonts/inter/`, SIL OFL 1.1).
+
 The three built-in styles and simple geometric icon primitives are distributed
-under the repository MIT license. No third-party font files are bundled.
+under the repository MIT license. The only bundled font is Inter under the SIL Open Font License (`fonts/inter/OFL.txt`).

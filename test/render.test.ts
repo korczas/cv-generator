@@ -113,6 +113,16 @@ for (const templateId of templates) {
   check(polish.includes("Doświadczenie") && polish.includes("Wykształcenie"), `[${templateId}] Polish output should use Polish headings`);
   check(!/>(Experience|Work Experience|Education)</.test(polish), `[${templateId}] Polish output should not contain English headings`);
   check(polish.includes('"(cd.)"'), `[${templateId}] Polish output should pass the Polish continuation label to the paginator`);
+  const embedded = renderCv(
+    config,
+    resolveTheme(loadTemplateTheme(templateId), config.theme, { fonts: { embed: "inter" } }),
+    baseDir,
+    templateId,
+  );
+  check(
+    /@font-face\{font-family:'Inter';[^}]*src:url\(data:font\/woff2;base64,/.test(embedded) && !html.includes("@font-face"),
+    `[${templateId}] embed "inter" should inline @font-face rules only when requested`,
+  );
   check(html.includes('<html lang="en">'), `[${templateId}] default output should declare lang="en"`);
 
   if (templateId === "plain") {
