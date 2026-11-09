@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{lang}}">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="{{contentSecurityPolicy}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{basics.name}} — Resume</title>
+<title>{{basics.name}} — {{labels.resume}}</title>
 {{#if theme.fonts.googleFontsHref}}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{theme.fonts.googleFontsHref}}" rel="stylesheet">{{/if}}
 <!--
   Plain: ATS-friendly single column. Text reads top to bottom in document order:
@@ -70,19 +70,19 @@ li { margin-bottom:2px; }
 </div>
 
 {{#if summary}}
-<h2 class="blk sec-h" data-title="Summary">Summary</h2>
-<p class="blk summary" data-splittable data-section="Summary">{{{md summary "inherit"}}}</p>
+<h2 class="blk sec-h" data-title="{{labels.summary}}">{{labels.summary}}</h2>
+<p class="blk summary" data-splittable data-section="{{labels.summary}}">{{{md summary "inherit"}}}</p>
 {{/if}}
 
 {{#if metrics}}
-<h2 class="blk sec-h" data-title="Highlights">Highlights</h2>
-<ul class="blk line" data-splittable data-section="Highlights">{{#each metrics}}<li><b>{{value}}</b> {{label}}{{#if sub}} ({{sub}}){{/if}}</li>{{/each}}</ul>
+<h2 class="blk sec-h" data-title="{{labels.highlights}}">{{labels.highlights}}</h2>
+<ul class="blk line" data-splittable data-section="{{labels.highlights}}">{{#each metrics}}<li><b>{{value}}</b> {{label}}{{#if sub}} ({{sub}}){{/if}}</li>{{/each}}</ul>
 {{/if}}
 
 {{#if experience}}
-<h2 class="blk sec-h" data-title="Experience">Experience</h2>
+<h2 class="blk sec-h" data-title="{{labels.experience}}">{{labels.experience}}</h2>
 {{#each experience}}
-<div class="blk entry" data-splittable data-section="Experience">
+<div class="blk entry" data-splittable data-section="{{labels.experience}}">
   <div class="entry-title">{{role}}, {{company}}</div>
   {{#if period}}<div class="entry-meta">{{period}}{{#if location}} | {{location}}{{/if}}</div>{{else}}{{#if location}}<div class="entry-meta">{{location}}</div>{{/if}}{{/if}}
   {{#if highlights}}<ul>{{#each highlights}}<li>{{{md this "inherit"}}}</li>{{/each}}</ul>{{/if}}
@@ -91,16 +91,16 @@ li { margin-bottom:2px; }
 {{/if}}
 
 {{#if skills}}
-<h2 class="blk sec-h" data-title="Skills">Skills</h2>
+<h2 class="blk sec-h" data-title="{{labels.skills}}">{{labels.skills}}</h2>
 {{#each skills}}
-<div class="blk line" data-splittable data-section="Skills"><b>{{category}}:</b> {{join items ", "}}</div>
+<div class="blk line" data-splittable data-section="{{labels.skills}}"><b>{{category}}:</b> {{join items ", "}}</div>
 {{/each}}
 {{/if}}
 
 {{#if projects}}
-<h2 class="blk sec-h" data-title="Projects">Projects</h2>
+<h2 class="blk sec-h" data-title="{{labels.projects}}">{{labels.projects}}</h2>
 {{#each projects}}
-<div class="blk entry" data-splittable data-section="Projects">
+<div class="blk entry" data-splittable data-section="{{labels.projects}}">
   <div class="entry-title">{{name}}</div>
   {{#if url}}<div class="entry-meta">{{url}}</div>{{/if}}
   {{#if description}}<div>{{{md description "inherit"}}}</div>{{/if}}
@@ -110,28 +110,28 @@ li { margin-bottom:2px; }
 {{/if}}
 
 {{#if achievements}}
-<h2 class="blk sec-h" data-title="Achievements">Achievements</h2>
+<h2 class="blk sec-h" data-title="{{labels.achievements}}">{{labels.achievements}}</h2>
 {{#each achievements}}
-<div class="blk entry" data-splittable data-section="Achievements"><span class="entry-title">{{title}}:</span> {{{md description "inherit"}}}</div>
+<div class="blk entry" data-splittable data-section="{{labels.achievements}}"><span class="entry-title">{{title}}:</span> {{{md description "inherit"}}}</div>
 {{/each}}
 {{/if}}
 
 {{#if education}}
-<h2 class="blk sec-h" data-title="Education">Education</h2>
+<h2 class="blk sec-h" data-title="{{labels.education}}">{{labels.education}}</h2>
 {{#each education}}
-<div class="blk line" data-section="Education">{{#each metaParts}}{{#if bold}}<b>{{text}}</b>{{else}}{{text}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+<div class="blk line" data-section="{{labels.education}}">{{#each metaParts}}{{#if bold}}<b>{{text}}</b>{{else}}{{text}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}}</div>
 {{/each}}
 {{/if}}
 
 {{#if languages}}
-<h2 class="blk sec-h" data-title="Languages">Languages</h2>
-<div class="blk line" data-splittable data-section="Languages">{{#each languages}}{{label}}{{#unless @last}}; {{/unless}}{{/each}}</div>
+<h2 class="blk sec-h" data-title="{{labels.languages}}">{{labels.languages}}</h2>
+<div class="blk line" data-splittable data-section="{{labels.languages}}">{{#each languages}}{{label}}{{#unless @last}}; {{/unless}}{{/each}}</div>
 {{/if}}
 
 {{#if speaking}}
-<h2 class="blk sec-h" data-title="Speaking">Speaking</h2>
+<h2 class="blk sec-h" data-title="{{labels.speaking}}">{{labels.speaking}}</h2>
 {{#each speaking}}
-<div class="blk line" data-splittable data-section="Speaking"><b>{{title}}</b>{{#if subParts}}, {{#each subParts}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}</div>
+<div class="blk line" data-splittable data-section="{{labels.speaking}}"><b>{{title}}</b>{{#if subParts}}, {{#each subParts}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}}</div>
 {{/each}}
 {{/if}}
 {{#if consent}}<footer id="cv-consent" class="blk consent" data-consent data-preserve-margin>{{consent}}</footer>{{/if}}

@@ -103,6 +103,18 @@ for (const templateId of templates) {
     `[${templateId}] Letter output should declare @page size letter and 1056px pages`,
   );
 
+  const polish = renderCv(
+    { ...config, language: "pl" },
+    resolveTheme(loadTemplateTheme(templateId), config.theme),
+    baseDir,
+    templateId,
+  );
+  check(polish.includes('<html lang="pl">'), `[${templateId}] Polish output should declare lang="pl"`);
+  check(polish.includes("Doświadczenie") && polish.includes("Wykształcenie"), `[${templateId}] Polish output should use Polish headings`);
+  check(!/>(Experience|Work Experience|Education)</.test(polish), `[${templateId}] Polish output should not contain English headings`);
+  check(polish.includes('"(cd.)"'), `[${templateId}] Polish output should pass the Polish continuation label to the paginator`);
+  check(html.includes('<html lang="en">'), `[${templateId}] default output should declare lang="en"`);
+
   if (templateId === "plain") {
     const source = html.slice(html.indexOf('id="cv-source"'), html.indexOf("<script"));
     check(!source.includes("<svg"), "[plain] should not render icons");

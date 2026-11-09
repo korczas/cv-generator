@@ -9,6 +9,7 @@ import Handlebars from "handlebars";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { photoDataUri, paginationScript, registerHelpers } from "./helpers.js";
+import { labelsFor } from "./labels.js";
 import { templatesDir } from "./paths.js";
 import { contentSecurityPolicy, paperOf, PAPER } from "./theme.js";
 import type {
@@ -253,7 +254,11 @@ function buildContext(config: EngineConfig, theme: Theme, baseDir: string) {
     pageContentWidth: theme.layout.pageWidth - 2 * theme.layout.sidePadding,
     pageCssSize: PAPER[paperOf(theme)].cssSize,
     contentSecurityPolicy: contentSecurityPolicy(theme),
-    paginationScript: new Handlebars.SafeString(paginationScript(theme)),
+    lang: config.language === "pl" ? "pl" : "en",
+    labels: labelsFor(config.language),
+    paginationScript: new Handlebars.SafeString(
+      paginationScript(theme, labelsFor(config.language).continued),
+    ),
   };
 }
 

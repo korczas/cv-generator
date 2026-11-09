@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{lang}}">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="{{contentSecurityPolicy}}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{basics.name}} — Resume</title>
+<title>{{basics.name}} — {{labels.resume}}</title>
 {{#if theme.fonts.googleFontsHref}}<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="{{theme.fonts.googleFontsHref}}" rel="stylesheet">{{/if}}
 <style>
 :root {
@@ -118,7 +118,7 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
       {{#if basics.displayHeadline}}<div class="headline">{{basics.displayHeadline}}</div>{{/if}}
       <div class="contact">{{#each basics.contactParts}}{{#if href}}<a href="{{href}}" style="color:var(--orange); font-weight:600;">{{text}}</a>{{else}}<span>{{text}}</span>{{/if}}{{#unless @last}}<span style="color:var(--divider-pipe);">|</span>{{/unless}}{{/each}}</div>
     </div>
-    {{#if basics.photoUri}}<img class="photo" src="{{basics.photoUri}}" alt="Portrait of {{basics.name}}">{{/if}}
+    {{#if basics.photoUri}}<img class="photo" src="{{basics.photoUri}}" alt="{{labels.photoAlt}} {{basics.name}}">{{/if}}
   </div>
   <div class="accent-rule"></div>
 </div>
@@ -138,16 +138,16 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
 {{/if}}
 
 {{#if skills}}
-<h2 class="blk sec-h" data-title="Skills">Skills</h2>
+<h2 class="blk sec-h" data-title="{{labels.skills}}">{{labels.skills}}</h2>
 {{#each skills}}
-<div class="blk skills" data-section="Skills" data-splittable><div class="skill-cat">{{category}}</div><div class="skill-val">{{join items ", "}}</div></div>
+<div class="blk skills" data-section="{{labels.skills}}" data-splittable><div class="skill-cat">{{category}}</div><div class="skill-val">{{join items ", "}}</div></div>
 {{/each}}
 {{/if}}
 
 {{#if experience}}
-<h2 class="blk sec-h" data-title="Experience">Experience</h2>
+<h2 class="blk sec-h" data-title="{{labels.experience}}">{{labels.experience}}</h2>
 {{#each experience}}
-<div class="blk entry" data-splittable data-section="Experience">
+<div class="blk entry" data-splittable data-section="{{labels.experience}}">
   <div class="job-head">
     <div class="job-title">{{role}} <span class="job-company">— {{company}}</span></div>
     {{#if period}}<div class="job-date">{{period}}</div>{{/if}}
@@ -165,9 +165,9 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
 {{/if}}
 
 {{#if projects}}
-<h2 class="blk sec-h" data-title="Projects">Projects</h2>
+<h2 class="blk sec-h" data-title="{{labels.projects}}">{{labels.projects}}</h2>
 {{#each projects}}
-<div class="blk entry project-entry" data-splittable data-section="Projects">
+<div class="blk entry project-entry" data-splittable data-section="{{labels.projects}}">
   <div class="project-title">{{#if url}}<a href="{{url}}">{{name}}</a>{{else}}{{name}}{{/if}}</div>
   {{#if description}}<div class="project-description">{{{md description}}}</div>{{/if}}
   {{#if highlights}}
@@ -182,9 +182,9 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
 {{/if}}
 
 {{#if achievements}}
-<h2 class="blk sec-h" data-title="Key Achievements">Key Achievements</h2>
+<h2 class="blk sec-h" data-title="{{labels.keyAchievements}}">{{labels.keyAchievements}}</h2>
 {{#each achievements}}
-<div class="blk ach-row" data-splittable data-section="Key Achievements">
+<div class="blk ach-row" data-splittable data-section="{{labels.keyAchievements}}">
   <div class="ach-icon">{{{icon icon}}}</div>
   <div style="flex:1;">
     <div class="ach-title">{{title}}</div>
@@ -195,9 +195,9 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
 {{/if}}
 
 {{#if speaking}}
-<h2 class="blk sec-h" data-title="Speaking">Speaking</h2>
+<h2 class="blk sec-h" data-title="{{labels.speaking}}">{{labels.speaking}}</h2>
 {{#each speaking}}
-<div class="blk talk" data-splittable data-section="Speaking">
+<div class="blk talk" data-splittable data-section="{{labels.speaking}}">
   <div class="talk-title">{{title}}</div>
   {{#if subParts}}<div class="talk-sub">{{#each subParts}}{{this}}{{#unless @last}} · {{/unless}}{{/each}}</div>{{/if}}
 </div>
@@ -205,15 +205,15 @@ h1 { font-size:40px; font-weight:800; color:var(--navy); margin:0 0 8px; letter-
 {{/if}}
 
 {{#if education}}
-<h2 class="blk sec-h" data-title="Education">Education</h2>
+<h2 class="blk sec-h" data-title="{{labels.education}}">{{labels.education}}</h2>
 {{#each education}}
-<div class="blk edu" data-section="Education">{{#each metaParts}}{{#if bold}}<b style="color:var(--navy);">{{text}}</b>{{else}}{{text}}{{/if}}{{#unless @last}} · {{/unless}}{{/each}}</div>
+<div class="blk edu" data-section="{{labels.education}}">{{#each metaParts}}{{#if bold}}<b style="color:var(--navy);">{{text}}</b>{{else}}{{text}}{{/if}}{{#unless @last}} · {{/unless}}{{/each}}</div>
 {{/each}}
 {{/if}}
 
 {{#if languages}}
-<h2 class="blk sec-h" data-title="Languages">Languages</h2>
-<div class="blk lang-line" data-splittable data-section="Languages">{{#each languages}}<span class="lang-item">{{label}}</span>{{#unless @last}}<span class="lang-sep">·</span>{{/unless}}{{/each}}</div>
+<h2 class="blk sec-h" data-title="{{labels.languages}}">{{labels.languages}}</h2>
+<div class="blk lang-line" data-splittable data-section="{{labels.languages}}">{{#each languages}}<span class="lang-item">{{label}}</span>{{#unless @last}}<span class="lang-sep">·</span>{{/unless}}{{/each}}</div>
 {{/if}}
 {{#if consent}}<footer id="cv-consent" class="blk consent" data-consent data-preserve-margin>{{consent}}</footer>{{/if}}
 </div>

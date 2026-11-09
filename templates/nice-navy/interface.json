@@ -4,6 +4,11 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "language": {
+      "type": "string",
+      "enum": ["en", "pl"],
+      "description": "CV language for section headings: en (default) or pl."
+    },
     "target": {
       "type": "string",
       "minLength": 1,

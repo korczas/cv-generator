@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{lang}}">
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="Content-Security-Policy" content="{{contentSecurityPolicy}}" />
@@ -361,29 +361,29 @@ strong { color: var(--ink); font-weight: 700; }
 </template>
 
 <div id="cv-sidebar-source" class="cv-measure">
-{{#if basics.photoUri}}<div class="blk side-block"><img class="photo" src="{{basics.photoUri}}" alt="Portrait of {{basics.name}}"></div>{{/if}}
+{{#if basics.photoUri}}<div class="blk side-block"><img class="photo" src="{{basics.photoUri}}" alt="{{labels.photoAlt}} {{basics.name}}"></div>{{/if}}
 {{#if basics.contactParts}}
-<h2 class="blk sec-h side-h" data-title="Contact">Contact</h2>
-{{#each basics.contactParts}}<div class="blk side-block" data-section="Contact" data-splittable>{{{icon icon}}} {{#if href}}<a href="{{href}}">{{text}}</a>{{else}}{{text}}{{/if}}</div>{{/each}}
+<h2 class="blk sec-h side-h" data-title="{{labels.contact}}">{{labels.contact}}</h2>
+{{#each basics.contactParts}}<div class="blk side-block" data-section="{{labels.contact}}" data-splittable>{{{icon icon}}} {{#if href}}<a href="{{href}}">{{text}}</a>{{else}}{{text}}{{/if}}</div>{{/each}}
 {{/if}}
-{{#if metrics}}<h2 class="blk sec-h side-h" data-title="At a Glance">At a Glance</h2>
-{{#each metrics}}<div class="blk tile side-block" data-section="At a Glance"><div class="val">{{value}}</div><div class="lab">{{label}}</div>{{#if sub}}<div class="sub">{{sub}}</div>{{/if}}</div>{{/each}}{{/if}}
-{{#if skills}}<h2 class="blk sec-h side-h" data-title="Skills">Skills</h2>
-{{#each skills}}<div class="blk skill-group" data-section="Skills" data-splittable><h4>{{category}}</h4><div class="chips">{{#each items}}<span class="chip">{{this}}</span> {{/each}}</div></div>{{/each}}{{/if}}
-{{#if languages}}<h2 class="blk sec-h side-h" data-title="Languages">Languages</h2>
-{{#each languages}}<div class="blk side-block" data-section="Languages" data-splittable>{{name}}{{#if level}} — {{level}}{{/if}}</div>{{/each}}{{/if}}
+{{#if metrics}}<h2 class="blk sec-h side-h" data-title="{{labels.atAGlance}}">{{labels.atAGlance}}</h2>
+{{#each metrics}}<div class="blk tile side-block" data-section="{{labels.atAGlance}}"><div class="val">{{value}}</div><div class="lab">{{label}}</div>{{#if sub}}<div class="sub">{{sub}}</div>{{/if}}</div>{{/each}}{{/if}}
+{{#if skills}}<h2 class="blk sec-h side-h" data-title="{{labels.skills}}">{{labels.skills}}</h2>
+{{#each skills}}<div class="blk skill-group" data-section="{{labels.skills}}" data-splittable><h4>{{category}}</h4><div class="chips">{{#each items}}<span class="chip">{{this}}</span> {{/each}}</div></div>{{/each}}{{/if}}
+{{#if languages}}<h2 class="blk sec-h side-h" data-title="{{labels.languages}}">{{labels.languages}}</h2>
+{{#each languages}}<div class="blk side-block" data-section="{{labels.languages}}" data-splittable>{{name}}{{#if level}} — {{level}}{{/if}}</div>{{/each}}{{/if}}
 </div>
 
 <div id="cv-source" class="cv-measure">
   {{#if summary}}
-  <section class="blk sec-h" data-title="Profile"><div class="sec-head"><span class="badge">{{{icon "star"}}}</span><h2>Profile</h2><span class="rule"></span></div></section>
-  <p class="blk summary" data-splittable data-section="Profile">{{{md summary}}}</p>
+  <section class="blk sec-h" data-title="{{labels.profile}}"><div class="sec-head"><span class="badge">{{{icon "star"}}}</span><h2>{{labels.profile}}</h2><span class="rule"></span></div></section>
+  <p class="blk summary" data-splittable data-section="{{labels.profile}}">{{{md summary}}}</p>
   {{/if}}
 
   {{#if experience}}
-  <section class="blk sec-h" data-title="Experience"><div class="sec-head"><span class="badge">{{{icon "clipboard-check"}}}</span><h2 data-title="Experience">Work Experience</h2><span class="rule"></span></div></section>
+  <section class="blk sec-h" data-title="{{labels.experience}}"><div class="sec-head"><span class="badge">{{{icon "clipboard-check"}}}</span><h2 data-title="{{labels.experience}}">{{labels.workExperience}}</h2><span class="rule"></span></div></section>
   {{#each experience}}
-  <article class="blk entry" data-splittable data-section="Experience">
+  <article class="blk entry" data-splittable data-section="{{labels.experience}}">
     <span class="dot"></span>
     <div class="row"><span class="title">{{company}}</span>{{#if period}}<span class="when">{{period}}</span>{{/if}}</div>
     <div class="subrow"><span class="role">{{role}}</span>{{#if location}}<span class="place">{{location}}</span>{{/if}}</div>
@@ -393,9 +393,9 @@ strong { color: var(--ink); font-weight: 700; }
   {{/if}}
 
   {{#if projects}}
-  <section class="blk sec-h" data-title="Projects"><div class="sec-head"><span class="badge">{{{icon "target"}}}</span><h2 data-title="Projects">Projects</h2><span class="rule"></span></div></section>
+  <section class="blk sec-h" data-title="{{labels.projects}}"><div class="sec-head"><span class="badge">{{{icon "target"}}}</span><h2 data-title="{{labels.projects}}">{{labels.projects}}</h2><span class="rule"></span></div></section>
   {{#each projects}}
-  <article class="blk entry" data-splittable data-section="Projects">
+  <article class="blk entry" data-splittable data-section="{{labels.projects}}">
     <span class="dot"></span>
     <div class="row"><span class="title">{{name}}</span>{{#if url}}<a class="place" href="{{url}}">{{url}}</a>{{/if}}</div>
     {{#if description}}<div class="role">{{{md description}}}</div>{{/if}}
@@ -405,9 +405,9 @@ strong { color: var(--ink); font-weight: 700; }
   {{/if}}
 
   {{#if achievements}}
-  <section class="blk sec-h" data-title="Key Achievements"><div class="sec-head"><span class="badge">{{{icon "lightning"}}}</span><h2 data-title="Key Achievements">Key Achievements</h2><span class="rule"></span></div></section>
+  <section class="blk sec-h" data-title="{{labels.keyAchievements}}"><div class="sec-head"><span class="badge">{{{icon "lightning"}}}</span><h2 data-title="{{labels.keyAchievements}}">{{labels.keyAchievements}}</h2><span class="rule"></span></div></section>
   {{#each achievements}}
-  <article class="blk ach" data-splittable data-section="Key Achievements">
+  <article class="blk ach" data-splittable data-section="{{labels.keyAchievements}}">
     <span class="ic">{{{icon icon}}}</span>
     <div><div class="title">{{title}}</div><div class="desc">{{{md description}}}</div></div>
   </article>
@@ -415,9 +415,9 @@ strong { color: var(--ink); font-weight: 700; }
   {{/if}}
 
   {{#if speaking}}
-  <section class="blk sec-h" data-title="Speaking"><div class="sec-head"><span class="badge">{{{icon "star"}}}</span><h2 data-title="Speaking">Speaking</h2><span class="rule"></span></div></section>
+  <section class="blk sec-h" data-title="{{labels.speaking}}"><div class="sec-head"><span class="badge">{{{icon "star"}}}</span><h2 data-title="{{labels.speaking}}">{{labels.speaking}}</h2><span class="rule"></span></div></section>
   {{#each speaking}}
-  <article class="blk entry" data-splittable data-section="Speaking">
+  <article class="blk entry" data-splittable data-section="{{labels.speaking}}">
     <span class="dot"></span>
     <div class="row"><span class="title">{{title}}</span>{{#if year}}<span class="when">{{year}}</span>{{/if}}</div>
     {{#if venue}}<div class="place">{{venue}}{{#if location}} · {{location}}{{/if}}</div>{{else}}{{#if location}}<div class="place">{{location}}</div>{{/if}}{{/if}}
@@ -426,9 +426,9 @@ strong { color: var(--ink); font-weight: 700; }
   {{/if}}
 
   {{#if education}}
-  <section class="blk sec-h" data-title="Education"><div class="sec-head"><span class="badge">{{{icon "clipboard-check"}}}</span><h2 data-title="Education">Education</h2><span class="rule"></span></div></section>
+  <section class="blk sec-h" data-title="{{labels.education}}"><div class="sec-head"><span class="badge">{{{icon "clipboard-check"}}}</span><h2 data-title="{{labels.education}}">{{labels.education}}</h2><span class="rule"></span></div></section>
   {{#each education}}
-  <article class="blk entry" data-splittable data-section="Education">
+  <article class="blk entry" data-splittable data-section="{{labels.education}}">
     <span class="dot"></span>
     <div class="row"><span class="title">{{#if degree}}{{degree}}{{else}}{{institution}}{{/if}}</span>{{#if period}}<span class="when">{{period}}</span>{{/if}}</div>
     {{#if degree}}<div class="place">{{institution}}</div>{{/if}}

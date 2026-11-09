@@ -1,6 +1,7 @@
 /** Shared browser paginator. Both lanes use measured fixed-height page shells. */
 export const PAGINATE_SOURCE = String.raw`
-function paginate(doc, PAGE_H) {
+function paginate(doc, PAGE_H, CONTINUED) {
+  var CONT = CONTINUED || '(continued)';
   var stage = doc.getElementById('cv-stage');
   var source = doc.getElementById('cv-source');
   if (!stage || !source) throw new Error('Missing cv-stage or cv-source');
@@ -43,7 +44,7 @@ function paginate(doc, PAGE_H) {
     h.dataset.continued = '1';
     h.dataset.title = title;
     h.append(doc.createTextNode(title + ' '));
-    var span = doc.createElement('span'); span.className = 'cont'; span.textContent = '(continued)'; h.append(span);
+    var span = doc.createElement('span'); span.className = 'cont'; span.textContent = CONT; h.append(span);
     return h;
   }
   // Split a semantic block at a word boundary, preserving inline markup and lists.

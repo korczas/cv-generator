@@ -59,7 +59,7 @@ export function photoDataUri(photoPath: string, baseDir: string): string {
 }
 
 /** The script reports success only after fonts, images, and all layout checks settle. */
-export function paginationScript(theme: Theme): string {
+export function paginationScript(theme: Theme, continuedLabel = "(continued)"): string {
   const height = theme.layout.pageHeight;
   if (!Number.isFinite(height)) throw new Error("Invalid page height");
   return `<script>
@@ -102,7 +102,7 @@ export function paginationScript(theme: Theme): string {
         await Promise.all(Array.from(document.images).map(function (img) { return img.decode(); }));
         if (probe) probe.remove();
         if (window.__pagination.status !== 'pending') return;
-        paginate(document, ${JSON.stringify(height)});
+        paginate(document, ${JSON.stringify(height)}, ${JSON.stringify(continuedLabel).replace(/</g, "\\u003c")});
         clearTimeout(timer);
         window.__pagination = { status: 'complete' };
         report('complete', '', document.querySelectorAll('#cv-stage > .cv-page').length);

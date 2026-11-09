@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0
+
+- Add top-level `language: en | pl`. Built-in templates render section headings, the "(continued)" label,
+  `<html lang>`, the document title and the photo alt text in the chosen language. Content is unchanged.
+- The paginator takes the continuation label as an argument; custom templates keep "(continued)".
+
+Template authors: use `{{labels.<key>}}` for headings (keys in `src/labels.ts`) and
+`<html lang="{{lang}}">`.
+
 ## 0.4.1
 
 - Build `dist/` in a `prepare` script so installing from a Git tag
