@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1
+
+- Build `dist/` in a `prepare` script so installing from a Git tag
+  (`github:korczas/cv-generator#v0.4.1`) yields a working package and API.
+
 ## 0.4.0
 
 - Publish as `@korczas/cv-generator` (the unscoped npm name is taken) with a
