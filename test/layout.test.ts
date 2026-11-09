@@ -21,7 +21,7 @@ try {
   await classicPage.setContent(
     renderCv(config, classicTheme, dirname(configPath), "classic"),
     {
-      waitUntil: "networkidle0",
+      waitUntil: "load",
     },
   );
   await classicPage.waitForFunction("window.__paginated === true", {
@@ -80,7 +80,7 @@ try {
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1000, height: 1400 });
-  await page.setContent(html, { waitUntil: "networkidle0" });
+  await page.setContent(html, { waitUntil: "load" });
   await page.evaluateHandle("document.fonts.ready");
   await page.waitForFunction("window.__paginated === true", { timeout: 5000 });
 
